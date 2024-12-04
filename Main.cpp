@@ -8,6 +8,7 @@
 #include "Brick.hpp"
 #include "Plate.hpp"
 #include "Ball.hpp"
+#include "GameOrchestra.hpp"
 
 
 #include <cmath>
@@ -22,127 +23,6 @@ const int    windowHeight     = 900;
 const double refreshPerSecond = 60;
 
 
-
-
-class GameOrchestra{
-
-  public:
-
-  GameOrchestra(){
-    init_bricks();
-  }
-
-  void check_collisions(){
-
-    //Check collision with each brick
-
-    for (int i =0; i < Bricks.size(); i++){
-      vector<float> collision = ball.get_collision_normal_vector(Bricks[i]);
-      if (collision[0] != 0 || collision[1] != 0){
-
-        Bricks.erase(Bricks.begin()+i);
-        Direction direction = get_reflected_direction(ball.get_direction(), collision);
-        ball.set_direction(direction);
-      }
-    }
-
-    //Check collision with the plate
-
-
-    vector<float> plate_collision = ball.get_collision_normal_vector(plate);
-    if(plate_collision[0] != 0 && plate_collision[1] != 0){
-      float alpha = 30 + 120*(1 - (plate.get_position().x/plate_width));
-      ball.set_direction(Direction{1, tan(alpha)});
-    }
-
-    
-    //Check collision with the wall
-
-    check_collision_wall();
-  
-  }
-
-  void draw(){
-    plate.draw(al_load_bitmap("Plate.png"));
-    ball.draw();
-    for(auto &brick:Bricks){
-      brick.draw(al_map_rgb(255,0,0));
-    }
-  }
-
-  void move_plate(bool direction){
-    plate.move(direction);
-  }
-
-  void move_ball(){
-    ball.move();
-  }
-
-  void draw_ball(){
-    ball.draw_vertexes();
-  }
-  void draw_plate(){
-    plate.draw_vertexes();
-  }
-
-  void draw_bricks(){
-    for(auto& brick: Bricks){
-      brick.draw_vertexes();
-    }
-  }
-
-  private:
-  vector<Brick> Bricks;
-
-  Ball ball{ Position{280, 750}, Direction{0,-1}, 5 };
-
-  Plate plate{
-      al_load_bitmap("plate.png")
-      ,Position{250,800}
-      ,Direction{0,0}
-      ,1
-      };
-
-  Direction get_reflected_direction(Direction init_direction ,vector<float> normal){
-    float length = sqrt(pow(normal[0], 2) + pow(normal[1], 2));
-    normal[0] /= length;
-    normal[1] /= length;
-    return Direction{init_direction.x - 2*(init_direction.x*normal[0] + init_direction.y*normal[1])*normal[0],  init_direction.y - 2*(init_direction.x*normal[0] + init_direction.y*normal[1])*normal[1]};
-  }
-
-  void init_bricks(){
-    for(int i = 0; i < 8; i++){
-      for(int j = 0; j < 14; j++){
-      Position position;
-      position.x = (float)(40 *j + 20  );
-      position.y = (float)((50 * (i+1)));
-      Brick brick{al_map_rgb(255,0,0), position, {0,0}, 0};
-      Bricks.push_back(brick);
-      }
-    }
-
-  }
-
-  void check_collision_wall(){
-    Position ball_position = ball.get_position();
-
-    if(ball_position.x -5 <0){
-      ball.set_direction(get_reflected_direction(ball.get_direction(), {1,0}));
-    }
-    if(ball_position.x +5>windowWidth){
-      ball.set_direction(get_reflected_direction(ball.get_direction(), {-1,0}));
-    }
-    if(ball_position.y + 5<0){
-      ball.set_direction(get_reflected_direction(ball.get_direction(), {0,1}));
-    }
-    if(ball_position.y - 5>windowHeight){
-      ball.set_direction(get_reflected_direction(ball.get_direction(), {0,-1}));
-    }
-
-  }
-  
-
-};
 
 
 
