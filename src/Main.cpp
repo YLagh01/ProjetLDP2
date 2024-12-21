@@ -2,19 +2,12 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
-
 #include <allegro5/color.h>
 
-#include "Brick.hpp"
-#include "Plate.hpp"
-#include "Ball.hpp"
 #include "GameOrchestra.hpp"
-
 
 #include <cmath>
 #include <iostream>
-#include <vector>
-#include <unordered_map>
 
 using namespace std;
 
