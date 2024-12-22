@@ -1,15 +1,16 @@
 # Compiler and flags
-CXX := g++
+CXX      := g++
 CXXFLAGS := -Wall -Wextra -pedantic
 
 # Allegro libraries
 ALLEGRO_FLAGS := $(shell pkg-config allegro-5 allegro_font-5 allegro_image-5 allegro_primitives-5 --cflags --libs)
 
 # Source files
-SRC_FILES := Ball.cpp Brick.cpp GameObject.cpp GameOrchestra.cpp Main.cpp Plate.cpp
+SRC_DIR    = ../src
+SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
 
 # Output binary
-TARGET := main
+TARGET := arkanoid
 
 # Default target
 all: $(TARGET)
