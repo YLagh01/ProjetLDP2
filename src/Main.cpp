@@ -1,43 +1,15 @@
+#include "Main.hpp"
+
+#include "GameOrchestra.hpp"
+
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/color.h>
 
-#include "GameOrchestra.hpp"
-
 #include <cmath>
 #include <iostream>
-
-using namespace std;
-
-static constexpr int    windowWidth      = 560;
-static constexpr int    windowHeight     = 900;
-static constexpr double refreshPerSecond = 60;
-
-
-void keyDown(const int keyCode, GameOrchestra &game) {
-    // Called when a key is pressed
-    // Key codes are here: https://www.allegro.cc/manual/5/keyboard.html
-    switch (keyCode) {
-        case ALLEGRO_KEY_1:
-            /* Code for key 1 pressed */
-            break;
-        case ALLEGRO_KEY_SPACE:
-            /* Code for space pressed */
-            break;
-        case ALLEGRO_KEY_A:
-            game.move_plate(false);
-            break;
-        case ALLEGRO_KEY_D:
-            game.move_plate(true);
-            break;
-        default:
-            break;
-    }
-}
-
-// *****************DONT EDIT BELOW HERE************************
 
 void must_init(const bool test, const char *description) {
     if (test) return;
@@ -51,7 +23,7 @@ int main(int /* argc */, char ** /* argv */) {
     must_init(al_install_keyboard(), "keyboard");
     must_init(al_install_mouse(), "mouse");
 
-    ALLEGRO_TIMER *timer = al_create_timer(1.0 / refreshPerSecond);
+    ALLEGRO_TIMER *timer = al_create_timer(1.0 / TARGET_FRAMERATE);
     must_init(timer, "timer");
 
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
@@ -61,7 +33,7 @@ int main(int /* argc */, char ** /* argv */) {
     al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
     al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 
-    ALLEGRO_DISPLAY *disp = al_create_display(windowWidth, windowHeight);
+    ALLEGRO_DISPLAY *disp = al_create_display(WINDOW_WIDTH, WINDOW_HEIGHT);
     must_init(disp, "display");
 
     ALLEGRO_FONT *font = al_create_builtin_font();
@@ -74,31 +46,24 @@ int main(int /* argc */, char ** /* argv */) {
     al_register_event_source(queue, al_get_timer_event_source(timer));
     al_init_image_addon();
 
-
     GameOrchestra game{};
 
-    bool done = false;
+    bool running = true;
     ALLEGRO_EVENT event;
 
-
     al_start_timer(timer);
-    while (!done) {
+    while (running) {
         al_wait_for_event(queue, &event);
         switch (event.type) {
-            case ALLEGRO_EVENT_KEY_DOWN:
-                keyDown(event.keyboard.keycode, game);
+            case ALLEGRO_EVENT_KEY_DOWN: case ALLEGRO_EVENT_KEY_UP:
+                game.input(event.type, event.keyboard.keycode);
                 break;
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                done = true;
+                running = false;
                 break;
             case ALLEGRO_EVENT_TIMER:
-                al_clear_to_color(al_map_rgb(255, 255, 255));
-                game.check_collisions();
-                game.move_ball();
-                game.draw_ball();
-                game.draw_bricks();
-                game.draw();
-                al_flip_display();
+                game.update();
+                game.render();
                 break;
             default:
                 break;

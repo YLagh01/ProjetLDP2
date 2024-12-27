@@ -6,8 +6,6 @@
 
 #include <vector>
 
-using namespace std;
-
 struct Position {
     float x;
     float y;
@@ -20,26 +18,30 @@ struct Direction {
 
 class GameObject {
 public:
-    GameObject(const vector<vector<float> > &_vertices, Position _position, Direction _direction, float _speed);
+    GameObject(const std::vector<std::vector<float> > &_vertices, Position _position, Direction _direction, float _speed);
 
-    vector<float> get_collision_normal_vector(const GameObject &) const;
+    std::vector<float> get_collision_normal_vector(const GameObject &) const;
+
+    Position get_position() const;
+
+    Direction get_direction() const;
+
+    void set_direction(Direction);
+
+    float get_speed() const;
+
+    void set_speed(float);
+
+    void move();
 
     void draw(ALLEGRO_COLOR) const;
 
     void draw(ALLEGRO_BITMAP *) const;
 
-    void set_direction(Direction);
-
-    Direction get_direction() const;
-
-    Position get_position() const;
-
-    void move();
-
-    void draw_vertices();
+    void draw_vertices() const;
 
 protected:
-    vector<vector<float> > vertices;
+    std::vector<std::vector<float> > vertices;
 
     Position position;
 
@@ -48,13 +50,13 @@ protected:
     float speed = 0;
 
 private:
-    static float get_maximum(vector<float>);
+    static float get_maximum(std::vector<float>);
 
-    static float get_minimum(vector<float>);
+    static float get_minimum(std::vector<float>);
 
-    static float get_vector_size(const vector<float> &);
+    static float get_vector_size(const std::vector<float> &);
 
-    vector<float> MTV(const vector<vector<float> > &, const vector<vector<float> > &) const;
+    std::vector<float> MTV(const std::vector<std::vector<float> > &, const std::vector<std::vector<float> > &) const;
 };
 
 #endif

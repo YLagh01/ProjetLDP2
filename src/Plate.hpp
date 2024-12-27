@@ -3,12 +3,13 @@
 
 #include "GameObject.hpp"
 
-
 class Plate : public GameObject {
 public:
     Plate(ALLEGRO_BITMAP *_bitmap, Position _position, Direction _direction, float _speed);
 
-    void move(bool direction);
+    void draw_vertices() const;
+
+    bool check_collision_walls() const;
 
 private:
     ALLEGRO_BITMAP *bitmap;

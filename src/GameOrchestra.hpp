@@ -1,42 +1,37 @@
 #ifndef GAMEORCHESTRA_HPP
 #define GAMEORCHESTRA_HPP
 
-#include <vector>
 #include "Brick.hpp"
 #include "Ball.hpp"
+#include "Main.hpp"
 #include "Plate.hpp"
+
+#include <vector>
 
 class GameOrchestra {
 public:
     GameOrchestra();
 
-    void check_collisions();
+    void update();
 
-    void draw() const;
+    void input(ALLEGRO_EVENT_TYPE, int);
 
-    void move_plate(bool direction);
-
-    void move_ball();
-
-    void draw_ball();
-
-    void draw_plate();
-
-    void draw_bricks() const;
+    void render() const;
 
 private:
-    vector<Brick> Bricks;
+    std::vector<Brick> bricks;
 
     Ball ball{Position{280, 750}, Direction{0, -1}, 5};
 
-    Plate plate{al_load_bitmap("../res/plate.png"), Position{250, 800}, Direction{0, 0}, 1};
-
-    static Direction get_reflected_direction(Direction init_direction, vector<float> normal);
+    Plate plate{al_load_bitmap("../res/plate.png"), Position{250, 800}, Direction{0, 0}, PLATE_SPEED};
 
     void init_bricks();
 
-    void check_collision_wall();
-};
+    void check_ball_collisions();
 
+    void key_down(int);
+
+    static void key_up(int);
+};
 
 #endif
