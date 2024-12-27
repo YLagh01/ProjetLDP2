@@ -4,19 +4,17 @@
 #include "GameObject.hpp"
 
 
+class Plate : public GameObject {
+public:
+    Plate(ALLEGRO_BITMAP *_bitmap, Position _position, Direction _direction, float _speed);
 
-class Plate:public GameObject{
-    public:
-    Plate(ALLEGRO_BITMAP* _bitmap, Position _position, Direction _direction, float _speed);
-    
     void move(bool direction);
 
-    private:
+private:
     ALLEGRO_BITMAP *bitmap;
-
 };
 
-const int plate_width = 130;
-const int plate_height = 34;
+constexpr int plate_width  = 130;
+constexpr int plate_height = 34;
 
 #endif

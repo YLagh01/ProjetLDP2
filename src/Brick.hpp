@@ -3,15 +3,14 @@
 
 #include "GameObject.hpp"
 
-class Brick:public GameObject{
-
+class Brick : public GameObject {
 public:
     Brick(ALLEGRO_COLOR _color, Position _position, Direction _direction, float _speed);
-    void draw_vertexes();
+
+    void draw_vertices() const;
 
 private:
-    ALLEGRO_COLOR color; 
-
+    ALLEGRO_COLOR color;
 };
 
 #endif

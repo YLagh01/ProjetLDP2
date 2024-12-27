@@ -3,13 +3,11 @@
 
 #include "GameObject.hpp"
 
-class Ball:public GameObject{
-
+class Ball : public GameObject {
 public:
-
     Ball(Position _position, Direction _direction, float _speed);
 
-    void draw();
+    void draw() const;
 };
 
 #endif

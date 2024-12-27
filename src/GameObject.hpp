@@ -1,76 +1,60 @@
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_image.h>
-
-#include <allegro5/color.h>
-
-#include <cmath>
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-
 #ifndef GAMEOBJECT_HPP
 #define GAMEOBJECT_HPP
 
+#include <allegro5/allegro_font.h>
+#include <allegro5/color.h>
+
+#include <vector>
 
 using namespace std;
 
-struct Position{
-  float x;
-  float y;
+struct Position {
+    float x;
+    float y;
 };
 
-struct Direction{
-  float x;
-  float y;
+struct Direction {
+    float x;
+    float y;
 };
 
-class GameObject{
-
+class GameObject {
 public:
-    GameObject(vector<vector<float>> _vertexes, Position _position, Direction _direction, float _speed);
+    GameObject(const vector<vector<float> > &_vertices, Position _position, Direction _direction, float _speed);
 
-    vector<float> get_collision_normal_vector(GameObject other);
+    vector<float> get_collision_normal_vector(const GameObject &) const;
 
-    void draw(ALLEGRO_COLOR color);
+    void draw(ALLEGRO_COLOR) const;
 
-    void draw(ALLEGRO_BITMAP* bitmap);
+    void draw(ALLEGRO_BITMAP *) const;
 
-    void set_direction(Direction direction);
+    void set_direction(Direction);
 
-    Direction get_direction();
+    Direction get_direction() const;
 
-    Position get_position();
+    Position get_position() const;
 
     void move();
 
-    void draw_vertexes();
+    void draw_vertices();
 
 protected:
+    vector<vector<float> > vertices;
 
-    vector<vector<float>> vertexes;
-    
     Position position;
-    
+
     Direction direction;
 
     float speed = 0;
 
-
-
 private:
+    static float get_maximum(vector<float>);
 
-    float get_maximum(vector<float> values);
+    static float get_minimum(vector<float>);
 
-    float get_minimum(vector<float> values);
+    static float get_vector_size(const vector<float> &);
 
-    float get_vector_size(vector<float> vector);
-
-    vector<float> MTV(vector<vector<float>> this_vertexes, vector<vector<float>> other_vertexes);
-
-
-
+    vector<float> MTV(const vector<vector<float> > &, const vector<vector<float> > &) const;
 };
 
 #endif
