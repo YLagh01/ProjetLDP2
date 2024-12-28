@@ -13,6 +13,8 @@ public:
 
     Vector2f get_position() const;
 
+    void set_position(Vector2f _position);
+
     Vector2f get_direction() const;
 
     void set_direction(Vector2f);

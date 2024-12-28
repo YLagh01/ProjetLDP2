@@ -8,22 +8,30 @@
 #include <cmath>
 #include <iostream>
 
-bool plate_moving_left  = false;
-bool plate_moving_right = false;
-
 GameOrchestra::GameOrchestra()
     : ball(Vector2f{WINDOW_WIDTH * 0.5, 750}, Vector2f{0, -1}, BALL_SPEED),
-      plate(al_load_bitmap("../res/sprites/plate_small.png"), Vector2f{(WINDOW_WIDTH - PLATE_WIDTH) * 0.5, 800}, Vector2f{0, 0}, PLATE_SPEED) {
+      plate(nullptr, Vector2f{(WINDOW_WIDTH - PLATE_WIDTH) * 0.5, 800}, Vector2f{0, 0}, PLATE_SPEED) {
+
     init_bricks();
+
+    // Preloading all the assets to save memory
+    background_bitmap = al_load_bitmap("../res/sprites/background.png");
+    brick_bitmap      = al_load_bitmap("../res/sprites/brick.png");
+    plate_bitmap      = al_load_bitmap("../res/sprites/plate_small.png");
+    ball_bitmap       = al_load_bitmap("../res/sprites/ball.png");
+
+    plate.set_bitmap(plate_bitmap);
+
+    main_font = al_load_font("../res/fonts/press_start_2p.ttf", MAIN_FONT_SIZE, 0);
 }
 
 void GameOrchestra::init_bricks() {
-    for (int i = 0; i < BRICK_ROWS; i++) {
+    for (int i = BRICK_ROWS; i > 0; i--) {
         for (int j = 0; j < BRICK_COLUMNS; j++) {
             Vector2f position{};
-            position.x = static_cast<float>(BRICK_WIDTH  * j + BORDERS_SIZE);
-            position.y = static_cast<float>(BRICK_HEIGHT * i + BRICKS_Y_PADDING);
-            Brick brick{al_map_rgb(255, 0, 0), position, {0, 0}, 0, 100};
+            position.x = BRICK_WIDTH  * static_cast<float>(j)              + BORDERS_SIZE;
+            position.y = BRICK_HEIGHT * static_cast<float>(BRICK_ROWS - i) + BRICKS_Y_PADDING;
+            Brick brick{position, {0, 0}, 0, Brick::get_brick_type_from_index(i - 1)};
             bricks.push_back(brick);
         }
     }
@@ -34,21 +42,34 @@ void GameOrchestra::update() {
 
     check_ball_collisions();
 
-    if (!plate.check_collision_walls()) {
+    if (!plate.check_collision_walls() && !mouse_mode) {
         plate.move();
     }
 
-    if (!plate_moving_left && !plate_moving_right) {
+    if (!plate.get_moving_left() && !plate.get_moving_right()) {
         plate.set_direction(Vector2f{0, 0});
     }
 }
 
-void GameOrchestra::input(const ALLEGRO_EVENT_TYPE event, const int keycode) {
-    // See key handling functions further down the file
-    if (event == ALLEGRO_EVENT_KEY_DOWN) {
-        key_down(keycode);
-    } else if (event == ALLEGRO_EVENT_KEY_UP) {
-        key_up(keycode);
+void GameOrchestra::input(const ALLEGRO_MOUSE_STATE &current_mouse_state, const ALLEGRO_MOUSE_STATE &previous_mouse_state, const ALLEGRO_EVENT_TYPE event, const int keycode) {
+    if (al_mouse_button_down(&current_mouse_state, 1) && !mouse_mode) { // Enter mouse plate control with left click
+        mouse_mode = true;
+    }
+    else if (al_mouse_button_down(&current_mouse_state, 2) && mouse_mode) { // Leave mouse plate control with right click (back to keyboard inputs)
+        mouse_mode = false;
+    }
+
+    // If the user is in mouse plate control mode, set the plate X position to the mouse's
+    if (mouse_mode) {
+        plate.set_position(Vector2f{static_cast<float>(current_mouse_state.x - PLATE_WIDTH * 0.5), plate.get_position().y});
+    }
+
+    if (!mouse_mode) {
+        if (event == ALLEGRO_EVENT_KEY_DOWN) {
+            key_down(keycode);
+        } else if (event == ALLEGRO_EVENT_KEY_UP) {
+            key_up(keycode);
+        }
     }
 }
 
@@ -56,25 +77,20 @@ void GameOrchestra::render() const {
     al_clear_to_color(al_map_rgb(255, 255, 255));
 
     // Drawing the background image
-    al_draw_bitmap(al_load_bitmap("../res/sprites/background.png"), 0, 0, ALLEGRO_FLIP_HORIZONTAL & ALLEGRO_FLIP_VERTICAL);
+    al_draw_bitmap(background_bitmap, 0, 0, ALLEGRO_FLIP_HORIZONTAL & ALLEGRO_FLIP_VERTICAL);
 
-    plate.draw(plate.get_bitmap());
-    ball.draw();
+    // Drawing the plate and the ball
+    plate.draw(plate_bitmap);
+    al_draw_bitmap(ball_bitmap, ball.get_position().x - BALL_RADIUS, ball.get_position().y - BALL_RADIUS, 0);
 
     for (auto &brick: bricks) {
-        al_draw_tinted_bitmap(al_load_bitmap("../res/sprites/brick.png"), brick.get_color(), brick.get_position().x, brick.get_position().y, 0);
-    }
+        al_draw_tinted_bitmap(brick_bitmap, brick.get_brick_type_data().color, brick.get_position().x, brick.get_position().y, 0);
 
-    for (const auto &brick: bricks) {
-        al_draw_rectangle(brick.get_position().x, brick.get_position().y, brick.get_position().x + BRICK_WIDTH,
-                          brick.get_position().y + BRICK_HEIGHT, al_map_rgb(0, 255, 0), 2);
+        //al_draw_rectangle(brick.get_position().x, brick.get_position().y, brick.get_position().x + BRICK_WIDTH,
+        //                  brick.get_position().y + BRICK_HEIGHT, al_map_rgb(0, 255, 0), 2);
     }
 
     // Drawing the player score
-    static constexpr int score_font_size = 16;
-
-    // Loading the TTF font
-    const ALLEGRO_FONT *score_font = al_load_font("../res/fonts/press_start_2p.ttf", score_font_size, 0);
     constexpr float padding_x = WINDOW_WIDTH * 0.5f;
     constexpr float padding_y = BRICKS_Y_PADDING * 0.5;
 
@@ -82,20 +98,20 @@ void GameOrchestra::render() const {
     const char *score_value_string = std::to_string(score).c_str();
 
     // Calculating the total width of the two strings combined
-    const int score_text_width  = al_get_text_width(score_font, score_text_string);
-    const int score_value_width = al_get_text_width(score_font, score_value_string);
+    const int score_text_width  = al_get_text_width(main_font, score_text_string);
+    const int score_value_width = al_get_text_width(main_font, score_value_string);
     const int score_total_width = score_text_width + score_value_width;
 
     // Calculating the resulting padding of the score text for the X axis
     const float final_padding_x = padding_x - static_cast<float>(score_total_width * 0.5);
 
     // Drawing the score label and value
-    al_draw_text(score_font, al_map_rgb(255, 255, 255), final_padding_x, padding_y, ALLEGRO_ALIGN_LEFT, score_text_string);
-    al_draw_text(score_font, al_map_rgb(255, 0, 0), final_padding_x + static_cast<float>(score_text_width), padding_y,
+    al_draw_text(main_font, al_map_rgb(255, 255, 255), final_padding_x, padding_y, ALLEGRO_ALIGN_LEFT, score_text_string);
+    al_draw_text(main_font, al_map_rgb(255, 0, 0), final_padding_x + static_cast<float>(score_text_width), padding_y,
                  ALLEGRO_ALIGN_LEFT, score_value_string);
 
-    al_draw_rectangle(plate.get_position().x, plate.get_position().y, plate.get_position().x + PLATE_WIDTH,
-                      plate.get_position().y + PLATE_HEIGHT, al_map_rgb(0, 255, 0), 2);
+    //al_draw_rectangle(plate.get_position().x, plate.get_position().y, plate.get_position().x + PLATE_WIDTH,
+    //                  plate.get_position().y + PLATE_HEIGHT, al_map_rgb(0, 255, 0), 2);
 
     al_flip_display();
 }
@@ -114,7 +130,7 @@ void GameOrchestra::check_ball_collisions() {
             const Vector2f direction = Ball::get_bounce_direction(ball.get_direction(), brick_collision_normal);
             ball.set_direction(direction);
             // Updating the player score
-            score += bricks[i].get_points_reward();
+            score += bricks[i].get_brick_type_data().points_bonus;
         }
     }
 
@@ -132,13 +148,13 @@ void GameOrchestra::check_ball_collisions() {
     const Vector2f ball_position  = ball.get_position();
     const Vector2f ball_direction = ball.get_direction();
 
-    if (ball_position.x < BORDERS_SIZE) {
+    if (ball_position.x - BALL_RADIUS <= BORDERS_SIZE) {
         ball.set_direction(Ball::get_bounce_direction(ball_direction, {1, 0}));
-    } else if (ball_position.x > WINDOW_WIDTH - BORDERS_SIZE) {
+    } else if (ball_position.x + BALL_RADIUS >= WINDOW_WIDTH - BORDERS_SIZE) {
         ball.set_direction(Ball::get_bounce_direction(ball_direction, {-1, 0}));
-    } else if (ball_position.y < BORDERS_SIZE) {
+    } else if (ball_position.y - BALL_RADIUS <= BORDERS_SIZE) {
         ball.set_direction(Ball::get_bounce_direction(ball_direction, {0, 1}));
-    } else if (ball_position.y > WINDOW_HEIGHT) {
+    } else if (ball_position.y + BALL_RADIUS >= WINDOW_HEIGHT) {
         ball.set_direction(Ball::get_bounce_direction(ball_direction, {0, -1}));
     }
 }
@@ -155,11 +171,11 @@ void GameOrchestra::key_down(const int keycode) {
             break;
         case ALLEGRO_KEY_Q:
             plate.set_direction(Vector2f{-1, 0});
-            plate_moving_left = true;
+            plate.set_moving_left(true);
             break;
         case ALLEGRO_KEY_D:
             plate.set_direction(Vector2f{1, 0});
-            plate_moving_right = true;
+            plate.set_moving_right(true);
             break;
         default:
             break;
@@ -176,10 +192,10 @@ void GameOrchestra::key_up(const int keycode) {
             /* Code for space pressed */
             break;
         case ALLEGRO_KEY_Q:
-            plate_moving_left = false;
+            plate.set_moving_left(false);
             break;
         case ALLEGRO_KEY_D:
-            plate_moving_right = false;
+            plate.set_moving_right(false);
             break;
         default:
             break;

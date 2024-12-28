@@ -11,6 +11,10 @@ Vector2f GameObject::get_position() const {
     return position;
 }
 
+void GameObject::set_position(const Vector2f _position) {
+    position = _position;
+}
+
 Vector2f GameObject::get_direction() const {
     return direction;
 }

@@ -13,11 +13,13 @@ public:
 
     void update();
 
-    void input(ALLEGRO_EVENT_TYPE, int);
+    void input(const ALLEGRO_MOUSE_STATE &, const ALLEGRO_MOUSE_STATE &, ALLEGRO_EVENT_TYPE, int);
 
     void render() const;
 
 private:
+    bool mouse_mode = false;
+
     int score = 0;
 
     std::vector<Brick> bricks;
@@ -26,13 +28,20 @@ private:
 
     Plate plate;
 
+    ALLEGRO_BITMAP *background_bitmap;
+    ALLEGRO_BITMAP *brick_bitmap;
+    ALLEGRO_BITMAP *plate_bitmap;
+    ALLEGRO_BITMAP *ball_bitmap;
+
+    ALLEGRO_FONT *main_font;
+
     void init_bricks();
 
     void check_ball_collisions();
 
     void key_down(int);
 
-    static void key_up(int);
+    void key_up(int);
 };
 
 #endif
