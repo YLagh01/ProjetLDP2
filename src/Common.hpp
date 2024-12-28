@@ -9,9 +9,11 @@ struct Vector2f {
 };
 
 // Display constants
-static constexpr int    WINDOW_WIDTH     = 560;
-static constexpr int    WINDOW_HEIGHT    = 900;
+static constexpr int    WINDOW_WIDTH     = 806;
+static constexpr int    WINDOW_HEIGHT    = 890;
 static constexpr double TARGET_FRAMERATE = 60;
+
+static constexpr int BORDERS_SIZE = 32;
 
 // Ball constants
 static constexpr float BALL_RADIUS = 10.0;
@@ -21,14 +23,14 @@ static constexpr float BALL_SPEED  = 8.0;
 static constexpr int BRICK_ROWS    = 8;
 static constexpr int BRICK_COLUMNS = 14;
 
-static constexpr int BRICK_WIDTH  = 40;
-static constexpr int BRICK_HEIGHT = 25;
+static constexpr int BRICK_WIDTH  = 53;
+static constexpr int BRICK_HEIGHT = 29;
 
-static constexpr int BRICKS_Y_PADDING = 100; // The Y-axis padding of the bricks
+static constexpr int BRICKS_Y_PADDING = 100 + BORDERS_SIZE; // The Y-axis padding of the bricks
 
 // Plate constants
-static constexpr int PLATE_WIDTH  = 130;
-static constexpr int PLATE_HEIGHT = 34;
+static constexpr int PLATE_WIDTH  = 115;
+static constexpr int PLATE_HEIGHT = 29;
 
 static constexpr float PLATE_SPEED = 10.0;
 

@@ -9,7 +9,7 @@ Ball::Ball(const Vector2f _position, const Vector2f _direction, const float _spe
 }
 
 void Ball::draw() const {
-    al_draw_filled_circle(position.x, position.y, BALL_RADIUS, al_map_rgb(0, 0, 255));
+    al_draw_filled_circle(position.x, position.y, BALL_RADIUS, al_map_rgb(255, 255, 255));
 }
 
 Vector2f Ball::get_bounce_direction(const Vector2f init_direction, const Vector2f normal) {

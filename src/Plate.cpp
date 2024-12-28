@@ -13,6 +13,6 @@ ALLEGRO_BITMAP *Plate::get_bitmap() const {
 }
 
 bool Plate::check_collision_walls() const {
-    return (direction.x == -1 && position.x <= 0) ||
-           (direction.x == 1 && position.x + PLATE_WIDTH > WINDOW_WIDTH);
+    return (direction.x == -1 && position.x <= BORDERS_SIZE) ||
+           (direction.x == 1 && position.x + PLATE_WIDTH > WINDOW_WIDTH - BORDERS_SIZE);
 }

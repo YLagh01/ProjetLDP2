@@ -9,10 +9,14 @@ Brick::Brick(const ALLEGRO_COLOR _color, const Vector2f _position, const Vector2
                                         points_reward(_points_reward) {
 }
 
-void Brick::draw() const {
-    al_draw_filled_rectangle(position.x, position.y, position.x + BRICK_WIDTH, position.y + BRICK_HEIGHT, color);
+ALLEGRO_COLOR Brick::get_color() const {
+    return color;
 }
 
 int Brick::get_points_reward() const {
     return points_reward;
+}
+
+void Brick::draw() const {
+    al_draw_filled_rectangle(position.x, position.y, position.x + BRICK_WIDTH, position.y + BRICK_HEIGHT, color);
 }
