@@ -6,6 +6,7 @@
 
 #include <string>
 #include <cmath>
+#include <iostream>
 
 bool plate_moving_left  = false;
 bool plate_moving_right = false;
@@ -122,7 +123,7 @@ void GameOrchestra::check_ball_collisions() {
     const bool intersect_plate = intersect_circle_AABB(ball.get_position(), BALL_RADIUS, plate.get_position(),
                                                        PLATE_WIDTH, PLATE_HEIGHT, plate_collision_normal);
     if (intersect_plate) {
-        const float alpha_radians = (30 + 120 * (1 - ball.get_position().x / PLATE_WIDTH)) * static_cast<float>(M_PI / 180.0f);
+        const float alpha_radians = (360 - (30 + 120 * (1 - (ball.get_position().x - plate.get_position().x) / PLATE_WIDTH))) * static_cast<float>(M_PI / 180.0f);
         ball.set_direction(Vector2f{std::cos(alpha_radians), std::sin(alpha_radians)});
     }
 
