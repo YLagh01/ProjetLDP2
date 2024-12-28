@@ -1,12 +1,12 @@
-#include "Main.hpp"
+#include "Common.hpp"
 
 #include "GameOrchestra.hpp"
 
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
-#include <allegro5/color.h>
 
 #include <cmath>
 #include <iostream>
@@ -38,6 +38,8 @@ int main(int /* argc */, char ** /* argv */) {
 
     ALLEGRO_FONT *font = al_create_builtin_font();
     must_init(font, "font");
+    al_init_font_addon();
+    al_init_ttf_addon();
 
     must_init(al_init_primitives_addon(), "primitives");
 

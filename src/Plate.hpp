@@ -5,17 +5,14 @@
 
 class Plate : public GameObject {
 public:
-    Plate(ALLEGRO_BITMAP *_bitmap, Position _position, Direction _direction, float _speed);
-
-    void draw_vertices() const;
+    Plate(ALLEGRO_BITMAP *_bitmap, Vector2f _position, Vector2f _direction, float _speed);
 
     bool check_collision_walls() const;
+
+    ALLEGRO_BITMAP *get_bitmap() const;
 
 private:
     ALLEGRO_BITMAP *bitmap;
 };
-
-constexpr int plate_width  = 130;
-constexpr int plate_height = 34;
 
 #endif

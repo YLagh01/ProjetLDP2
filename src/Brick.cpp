@@ -1,23 +1,18 @@
 #include "Brick.hpp"
 
+#include "Common.hpp"
+
 #include <allegro5/allegro_primitives.h>
 
-Brick::Brick(const ALLEGRO_COLOR _color, const Position _position, const Direction _direction, const float _speed): GameObject(
-        {
-            {_position.x - 20, _position.y + 15},
-            {_position.x + 20, _position.y + 15},
-            {_position.x + 20, _position.y - 15},
-            {_position.x - 20, _position.y - 15}
-        }
-        , _position
-        , _direction
-        , _speed)
-    , color(_color) {
+Brick::Brick(const ALLEGRO_COLOR _color, const Vector2f _position, const Vector2f _direction, const float _speed,
+             const int _points_reward): GameObject(_position, _direction, _speed), color(_color),
+                                        points_reward(_points_reward) {
 }
 
-void Brick::draw_vertices() const {
-    al_draw_filled_circle(vertices[0][0], vertices[0][1], 2, al_map_rgb(255, 0, 0));
-    al_draw_filled_circle(vertices[1][0], vertices[1][1], 2, al_map_rgb(0, 255, 0));
-    al_draw_filled_circle(vertices[2][0], vertices[2][1], 2, al_map_rgb(0, 0, 255));
-    al_draw_filled_circle(vertices[3][0], vertices[3][1], 2, al_map_rgb(0, 0, 0));
+void Brick::draw() const {
+    al_draw_filled_rectangle(position.x, position.y, position.x + BRICK_WIDTH, position.y + BRICK_HEIGHT, color);
+}
+
+int Brick::get_points_reward() const {
+    return points_reward;
 }

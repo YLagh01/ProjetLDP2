@@ -3,7 +3,7 @@ CXX      := g++
 CXXFLAGS := -Wall -Wextra -pedantic
 
 # Allegro libraries
-ALLEGRO_FLAGS := $(shell pkg-config allegro-5 allegro_font-5 allegro_image-5 allegro_primitives-5 --cflags --libs)
+ALLEGRO_FLAGS := $(shell pkg-config allegro-5 allegro_font-5 allegro_ttf-5 allegro_image-5 allegro_primitives-5 --cflags --libs)
 
 # Source files
 SRC_DIR    = ../src

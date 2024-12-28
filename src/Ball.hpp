@@ -5,11 +5,11 @@
 
 class Ball : public GameObject {
 public:
-    Ball(Position _position, Direction _direction, float _speed);
+    Ball(Vector2f _position, Vector2f _direction, float _speed);
 
     void draw() const;
 
-    static Direction get_bounce_direction(Direction, std::vector<float>) ;
+    static Vector2f get_bounce_direction(Vector2f, Vector2f) ;
 };
 
 #endif

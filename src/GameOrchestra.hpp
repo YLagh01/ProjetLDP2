@@ -3,7 +3,6 @@
 
 #include "Brick.hpp"
 #include "Ball.hpp"
-#include "Main.hpp"
 #include "Plate.hpp"
 
 #include <vector>
@@ -19,11 +18,13 @@ public:
     void render() const;
 
 private:
+    int score = 0;
+
     std::vector<Brick> bricks;
 
-    Ball ball{Position{280, 750}, Direction{0, -1}, 5};
+    Ball ball;
 
-    Plate plate{al_load_bitmap("../res/plate.png"), Position{250, 800}, Direction{0, 0}, PLATE_SPEED};
+    Plate plate;
 
     void init_bricks();
 
