@@ -169,11 +169,11 @@ void GameOrchestra::key_down(const int keycode) {
         case ALLEGRO_KEY_SPACE:
             /* Code for space pressed */
             break;
-        case ALLEGRO_KEY_Q:
+        case ALLEGRO_KEY_A: case ALLEGRO_KEY_Q: // Left key
             plate.set_direction(Vector2f{-1, 0});
             plate.set_moving_left(true);
             break;
-        case ALLEGRO_KEY_D:
+        case ALLEGRO_KEY_P: case ALLEGRO_KEY_D: // Right key
             plate.set_direction(Vector2f{1, 0});
             plate.set_moving_right(true);
             break;
@@ -191,10 +191,10 @@ void GameOrchestra::key_up(const int keycode) {
         case ALLEGRO_KEY_SPACE:
             /* Code for space pressed */
             break;
-        case ALLEGRO_KEY_Q:
+        case ALLEGRO_KEY_A: case ALLEGRO_KEY_Q: // Left key
             plate.set_moving_left(false);
             break;
-        case ALLEGRO_KEY_D:
+        case ALLEGRO_KEY_P: case ALLEGRO_KEY_D: // Right key
             plate.set_moving_right(false);
             break;
         default:
