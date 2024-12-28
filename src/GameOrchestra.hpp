@@ -18,7 +18,7 @@ public:
     void render() const;
 
 private:
-    bool mouse_mode = false;
+    bool mouse_control_mode = false;
 
     int score = 0;
 

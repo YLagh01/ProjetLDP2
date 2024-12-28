@@ -4,6 +4,7 @@
 
 #include "Common.hpp"
 
+// Map of each brick type and its information (color, points bonus)
 static const std::unordered_map<const BRICK_TYPE, const BrickTypeData> brick_type_data_map = {
     {BRICK_TYPE::WHITE  , {al_map_rgb(255, 255, 255), 50 }},
     {BRICK_TYPE::ORANGE , {al_map_rgb(252, 139, 0  ), 60 }},

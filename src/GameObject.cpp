@@ -32,6 +32,7 @@ void GameObject::set_speed(const float _speed) {
 }
 
 void GameObject::move() {
+    // Using vector operations to account for movement (A = A + v * B)
     position.x += speed * direction.x;
     position.y += speed * direction.y;
 }

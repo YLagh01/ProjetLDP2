@@ -42,7 +42,7 @@ void GameOrchestra::update() {
 
     check_ball_collisions();
 
-    if (!plate.check_collision_walls() && !mouse_mode) {
+    if (!plate.check_collision_walls() && !mouse_control_mode) {
         plate.move();
     }
 
@@ -52,19 +52,19 @@ void GameOrchestra::update() {
 }
 
 void GameOrchestra::input(const ALLEGRO_MOUSE_STATE &current_mouse_state, const ALLEGRO_MOUSE_STATE &previous_mouse_state, const ALLEGRO_EVENT_TYPE event, const int keycode) {
-    if (al_mouse_button_down(&current_mouse_state, 1) && !mouse_mode) { // Enter mouse plate control with left click
-        mouse_mode = true;
+    if (al_mouse_button_down(&current_mouse_state, 1) && !mouse_control_mode) { // Enter mouse plate control with left click
+        mouse_control_mode = true;
     }
-    else if (al_mouse_button_down(&current_mouse_state, 2) && mouse_mode) { // Leave mouse plate control with right click (back to keyboard inputs)
-        mouse_mode = false;
+    else if (al_mouse_button_down(&current_mouse_state, 2) && mouse_control_mode) { // Leave mouse plate control with right click (back to keyboard inputs)
+        mouse_control_mode = false;
     }
 
     // If the user is in mouse plate control mode, set the plate X position to the mouse's
-    if (mouse_mode) {
+    if (mouse_control_mode) {
         plate.set_position(Vector2f{static_cast<float>(current_mouse_state.x - PLATE_WIDTH * 0.5), plate.get_position().y});
     }
 
-    if (!mouse_mode) {
+    if (!mouse_control_mode) {
         if (event == ALLEGRO_EVENT_KEY_DOWN) {
             key_down(keycode);
         } else if (event == ALLEGRO_EVENT_KEY_UP) {
