@@ -1,6 +1,8 @@
-#include "Common.hpp"
+#include "../Common.hpp"
 
-#include "GameOrchestra.hpp"
+#include "../states/GameStateManager.hpp"
+#include "../states/PlayState.hpp"
+#include "../states/GameOverState.hpp"
 
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
@@ -47,6 +49,8 @@ int main(int /* argc */, char ** /* argv */) {
     al_init_font_addon();
     al_init_ttf_addon();
 
+    FontManager font_manager{};
+
     must_init(al_init_primitives_addon(), "primitives");
 
     al_register_event_source(event_queue, al_get_keyboard_event_source());
@@ -60,7 +64,11 @@ int main(int /* argc */, char ** /* argv */) {
     al_set_display_icon(display, al_load_bitmap("../res/sprites/icon.png"));
 
     // Declaring core game variables
-    GameOrchestra game{};
+    // The game state manager helps us keep track of the current game state to call core functions (input, update, render) and update it if needed
+    GameStateManager game_state_manager;
+    // Making the play state the initial state on runtime
+    game_state_manager.update_state(std::make_unique<PlayState>(&game_state_manager));
+
     bool running = true;
     ALLEGRO_EVENT event;
 
@@ -77,7 +85,7 @@ int main(int /* argc */, char ** /* argv */) {
         al_wait_for_event(event_queue, &event);
 
         // Handling mouse and keyboard inputs
-        game.input(current_mouse_state, previous_mouse_state, event.type, event.keyboard.keycode);
+        game_state_manager.input(current_mouse_state, previous_mouse_state, event.type, event.keyboard.keycode);
 
         // Updating the previous mouse state to be the current one
         previous_mouse_state = current_mouse_state;
@@ -87,8 +95,10 @@ int main(int /* argc */, char ** /* argv */) {
                 running = false;
                 break;
             case ALLEGRO_EVENT_TIMER:
-                game.update();
-                game.render();
+                // Accounting for game updates
+                game_state_manager.update();
+                // Drawing elements to the screen
+                game_state_manager.render(font_manager);
                 break;
             default:
                 break;

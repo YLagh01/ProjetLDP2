@@ -2,9 +2,8 @@
 
 #include <allegro5/allegro_primitives.h>
 
-GameObject::GameObject(const Vector2f _position, const Vector2f _direction,
-                       const float _speed): position(_position), direction(_direction),
-                                            speed(_speed) {
+GameObject::GameObject(const Vector2f _position, const Vector2f _direction, const Vector2f _size,
+                       const float _speed): position(_position), direction(_direction), size(_size), speed(_speed) {
 }
 
 Vector2f GameObject::get_position() const {
@@ -21,6 +20,14 @@ Vector2f GameObject::get_direction() const {
 
 void GameObject::set_direction(const Vector2f _direction) {
     direction = _direction;
+}
+
+Vector2f GameObject::get_size() const {
+    return size;
+}
+
+void GameObject::set_size(const Vector2f _size) {
+    position = _size;
 }
 
 float GameObject::get_speed() const {

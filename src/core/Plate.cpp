@@ -1,12 +1,13 @@
 #include "Plate.hpp"
 
-#include "Common.hpp"
+#include "../Common.hpp"
 
 #include <allegro5/allegro_primitives.h>
 
 Plate::Plate(ALLEGRO_BITMAP *_bitmap, const Vector2f _position, const Vector2f _direction,
-             const float _speed): GameObject(_position, _direction, _speed), bitmap(_bitmap) {
-    moving_left  = false;
+             const float _speed): GameObject(_position, _direction, Vector2f{PLATE_WIDTH, PLATE_HEIGHT}, _speed),
+                                  bitmap(_bitmap) {
+    moving_left = false;
     moving_right = false;
 }
 

@@ -1,9 +1,9 @@
 #include "Ball.hpp"
 
-#include "Common.hpp"
+#include "../Common.hpp"
 
 Ball::Ball(const Vector2f _position, const Vector2f _direction, const float _speed): GameObject(
-    _position, _direction, _speed) {
+    _position, _direction, Vector2f{BALL_DIAMETER, BALL_DIAMETER}, _speed) {
 }
 
 Vector2f Ball::get_bounce_direction(const Vector2f init_direction, const Vector2f normal) {

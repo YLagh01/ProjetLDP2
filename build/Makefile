@@ -6,13 +6,18 @@ CXXFLAGS := -Wall -Wextra -pedantic
 ALLEGRO_FLAGS := $(shell pkg-config allegro-5 allegro_font-5 allegro_ttf-5 allegro_image-5 allegro_primitives-5 --cflags --libs)
 
 # Source files
-SRC_DIR    = ../src
-SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
+SRC_DIR = ../src
+
+CORE_DIR   = $(SRC_DIR)/core
+STATES_DIR = $(SRC_DIR)/states
+
+SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp) \
+			$(wildcard $(CORE_DIR)/*.cpp) \
+            $(wildcard $(STATES_DIR)/*.cpp)
 
 # Output binary
-TARGET := arkanoid
+TARGET = arkanoid
 
-# Default target
 all: $(TARGET)
 
 # Linking and compiling all sources into the final binary

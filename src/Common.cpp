@@ -27,40 +27,40 @@ float get_length(const float vector) {
     return std::sqrt(vector * vector + vector * vector);
 }
 
-bool intersect_circle_AABB(const Vector2f circle_origin, const float circle_radius,
-                          const Vector2f aabb_origin, const float aabb_width, const float aabb_height,
-                          Vector2f &intersection_normal) {
-    // Finding the closest point on the AABB from the circle origin
-    const float closest_x = std::max(aabb_origin.x, std::min(circle_origin.x, aabb_origin.x + aabb_width));
-    const float closest_y = std::max(aabb_origin.y, std::min(circle_origin.y, aabb_origin.y + aabb_height));
+bool intersect_AABB_AABB(const Vector2f source_origin, const Vector2f source_size,
+                         const Vector2f target_origin, const Vector2f target_size,
+                         Vector2f &intersection_normal) {
+    // Calculating the upper bounds of each of the AABBs
+    const float source_upper_x = source_origin.x + source_size.x;
+    const float source_upper_y = source_origin.y + source_size.y;
+    const float target_upper_x = target_origin.x + target_size.x;
+    const float target_upper_y = target_origin.y + target_size.y;
 
-    const float distance_x = circle_origin.x - closest_x;
-    const float distance_y = circle_origin.y - closest_y;
-
-    // No possible intersection, the AABB is out of range
-    if (distance_x * distance_x + distance_y * distance_y > circle_radius * circle_radius) {
+    // Checking if the AABBs overlap on the two axes
+    // Adding epsilon to the upper bounds prevent clipping
+    if (source_upper_x + EPS < target_origin.x || source_origin.x > target_upper_x + EPS ||
+        source_upper_y + EPS < target_origin.y || source_origin.y > target_upper_y + EPS) {
         intersection_normal = Vector2f{0, 0};
         return false;
     }
 
-    // Computing the distance to each of the AABB faces
-    const float left_dist   = std::fabs(circle_origin.x - (aabb_origin.x - circle_radius));               // Distance to the left face
-    const float right_dist  = std::fabs(circle_origin.x - (aabb_origin.x + aabb_width + circle_radius));  // Distance to the right face
-    const float top_dist    = std::fabs(circle_origin.y - (aabb_origin.y - circle_radius));               // Distance to the top face
-    const float bottom_dist = std::fabs(circle_origin.y - (aabb_origin.y + aabb_height + circle_radius)); // Distance to the bottom face
+    // Calculating the length of the overlap on the two axes
+    const float overlap_x = std::min(source_upper_x, target_upper_x) - std::max(source_origin.x, target_origin.x);
+    const float overlap_y = std::min(source_upper_y, target_upper_y) - std::max(source_origin.y, target_origin.y);
 
-    // The smallest distance to the AABB is the distance to the nearest face
-    const float min_dist = std::min(std::min(left_dist, right_dist), std::min(top_dist, bottom_dist));
-
-    // Determining the intersection normal from the nearest face
-    if (min_dist == left_dist) {
-        intersection_normal = Vector2f{1, 0}; // Left face
-    } else if (min_dist == right_dist) {
-        intersection_normal = Vector2f{-1, 0}; // Right face
-    } else if (min_dist == top_dist) {
-        intersection_normal = Vector2f{0, 1}; // Top face
-    } else if (min_dist == bottom_dist) {
-        intersection_normal = Vector2f{0, -1}; // Bottom face
+    // Determining the intersection normal from the overlap and respective origin coordinates on the two axes
+    if (overlap_x < overlap_y) {
+        if (source_origin.x < target_origin.x) {
+            intersection_normal = Vector2f{1, 0}; // Left face of target
+        } else {
+            intersection_normal = Vector2f{-1, 0}; // Right face of target
+        }
+    } else {
+        if (source_origin.y < target_origin.y) {
+            intersection_normal = Vector2f{0, 1}; // Top face of target
+        } else {
+            intersection_normal = Vector2f{0, -1}; // Bottom face of target
+        }
     }
 
     // An intersection was found

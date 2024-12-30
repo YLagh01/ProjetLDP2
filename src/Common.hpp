@@ -8,6 +8,9 @@ struct Vector2f {
     float y;
 };
 
+// Math constants
+static constexpr float EPS = 1e-2; // epsilon value
+
 // Display constants
 static constexpr int    WINDOW_WIDTH     = 806;
 static constexpr int    WINDOW_HEIGHT    = 890;
@@ -15,11 +18,9 @@ static constexpr double TARGET_FRAMERATE = 60;
 
 static constexpr int BORDERS_SIZE = 29;
 
-static constexpr int MAIN_FONT_SIZE = 16;
-
 // Ball constants
-static constexpr float BALL_RADIUS = 10.0;
-static constexpr float BALL_SPEED  = 8.0;
+static constexpr float BALL_DIAMETER = 20.0;
+static constexpr float BALL_SPEED    = 8.0;
 
 // Bricks constants
 static constexpr int BRICK_ROWS    = 8;
@@ -45,6 +46,6 @@ float get_length(const std::vector<float> &);
 
 float get_length(float);
 
-bool intersect_circle_AABB(Vector2f, float, Vector2f, float, float, Vector2f &);
+bool intersect_AABB_AABB(Vector2f, Vector2f, Vector2f, Vector2f, Vector2f &);
 
 #endif
