@@ -12,7 +12,7 @@ CORE_DIR   = $(SRC_DIR)/core
 STATES_DIR = $(SRC_DIR)/states
 
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp) \
-			$(wildcard $(CORE_DIR)/*.cpp) \
+	    $(wildcard $(CORE_DIR)/*.cpp) \
             $(wildcard $(STATES_DIR)/*.cpp)
 
 # Output binary
