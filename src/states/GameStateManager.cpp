@@ -1,3 +1,8 @@
+/*
+ * INFO-F202 (2024 - 2025)
+ * Written with ❤︎ by Yassir Laghmouchi & Nabil El Muhur @ ULB
+ */
+
 #include "GameStateManager.hpp"
 
 void GameStateManager::update_state(std::unique_ptr<GameState> new_state) {
@@ -8,10 +13,8 @@ void GameStateManager::update() const {
     current_state->update();
 }
 
-void GameStateManager::input(const ALLEGRO_MOUSE_STATE &current_mouse_state,
-                             const ALLEGRO_MOUSE_STATE &previous_mouse_state, const ALLEGRO_EVENT_TYPE event,
-                             const int keycode) const {
-    current_state->input(current_mouse_state, previous_mouse_state, event, keycode);
+void GameStateManager::input(const ALLEGRO_MOUSE_STATE &mouse_state, const ALLEGRO_EVENT_TYPE event, const int keycode) const {
+    current_state->input(mouse_state, event, keycode);
 }
 
 void GameStateManager::render(const FontManager &font_manager) const {

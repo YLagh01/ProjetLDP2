@@ -1,10 +1,15 @@
+/*
+ * INFO-F202 (2024 - 2025)
+ * Written with ❤︎ by Yassir Laghmouchi & Nabil El Muhur @ ULB
+ */
+
 #include "../Common.hpp"
+
+#include "../core/FontManager.hpp"
 
 #include "../states/GameStateManager.hpp"
 #include "../states/PlayState.hpp"
-#include "../states/GameOverState.hpp"
 
-#include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_primitives.h>
@@ -17,7 +22,7 @@ void must_init(const bool test, const char *description) {
     // Handling Allegro initialisations
     if (test) return;
 
-    std::cerr << "couldn't initialize" << description << '\n';
+    std::cerr << "Error: Could not initialize" << description << std::endl;
     exit(1);
 }
 
@@ -49,8 +54,6 @@ int main(int /* argc */, char ** /* argv */) {
     al_init_font_addon();
     al_init_ttf_addon();
 
-    FontManager font_manager{};
-
     must_init(al_init_primitives_addon(), "primitives");
 
     al_register_event_source(event_queue, al_get_keyboard_event_source());
@@ -66,29 +69,27 @@ int main(int /* argc */, char ** /* argv */) {
     // Declaring core game variables
     // The game state manager helps us keep track of the current game state to call core functions (input, update, render) and update it if needed
     GameStateManager game_state_manager;
+    SpriteManager    sprite_manager{};
+    FontManager      font_manager{};
     // Making the play state the initial state on runtime
-    game_state_manager.update_state(std::make_unique<PlayState>(&game_state_manager));
+    game_state_manager.update_state(std::make_unique<PlayState>(&game_state_manager, sprite_manager));
 
     bool running = true;
     ALLEGRO_EVENT event;
 
-    // Keeping track of the mouse's current and previous states
-    ALLEGRO_MOUSE_STATE current_mouse_state;
-    ALLEGRO_MOUSE_STATE previous_mouse_state;
+    // Keeping track of the mouse's state
+    ALLEGRO_MOUSE_STATE mouse_state;
 
     // Starting the timer for consistent updates
     al_start_timer(timer);
 
     // Main loop
     while (running) {
-        al_get_mouse_state(&current_mouse_state);
+        al_get_mouse_state(&mouse_state);
         al_wait_for_event(event_queue, &event);
 
         // Handling mouse and keyboard inputs
-        game_state_manager.input(current_mouse_state, previous_mouse_state, event.type, event.keyboard.keycode);
-
-        // Updating the previous mouse state to be the current one
-        previous_mouse_state = current_mouse_state;
+        game_state_manager.input(mouse_state, event.type, event.keyboard.keycode);
 
         switch (event.type) {
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -97,7 +98,7 @@ int main(int /* argc */, char ** /* argv */) {
             case ALLEGRO_EVENT_TIMER:
                 // Accounting for game updates
                 game_state_manager.update();
-                // Drawing elements to the screen
+            // Drawing elements to the screen
                 game_state_manager.render(font_manager);
                 break;
             default:

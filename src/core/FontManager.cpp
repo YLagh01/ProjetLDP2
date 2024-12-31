@@ -1,11 +1,14 @@
+/*
+ * INFO-F202 (2024 - 2025)
+ * Written with ❤︎ by Yassir Laghmouchi & Nabil El Muhur @ ULB
+ */
+
 #include "FontManager.hpp"
 
-#include <iostream>
-#include <ostream>
-
 FontManager::FontManager() {
-    main_font      = al_load_font("../res/fonts/press_start_2p.ttf", MAIN_FONT_SIZE, 0);
-    secondary_font = al_load_font("../res/fonts/retro_gaming.ttf", MAIN_FONT_SIZE, 0);
+    main_font_small      = al_load_font("../res/fonts/press_start_2p.ttf", MAIN_FONT_SIZE_SMALL, 0);
+    secondary_font_small = al_load_font("../res/fonts/retro_gaming.ttf", MAIN_FONT_SIZE_SMALL, 0);
 
-    std::cout << al_get_text_width(secondary_font, "foo") << std::endl;
+    main_font_big      = al_load_font("../res/fonts/press_start_2p.ttf", MAIN_FONT_SIZE_BIG, 0);
+    secondary_font_big = al_load_font("../res/fonts/retro_gaming.ttf", MAIN_FONT_SIZE_BIG, 0);
 }

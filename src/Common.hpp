@@ -1,7 +1,14 @@
+/*
+ * INFO-F202 (2024 - 2025)
+ * Written with ❤︎ by Yassir Laghmouchi & Nabil El Muhur @ ULB
+ */
+
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
-#include <vector>
+#include "core/FontManager.hpp"
+
+#include <string>
 
 struct Vector2f {
     float x;
@@ -9,7 +16,10 @@ struct Vector2f {
 };
 
 // Math constants
-static constexpr float EPS = 1e-2; // epsilon value
+static constexpr double EPS = 1e-2; // epsilon value
+
+// Path constants
+static const std::string HIGH_SCORE_PATH = "../res/player_data/high_score.txt";
 
 // Display constants
 static constexpr int    WINDOW_WIDTH     = 806;
@@ -20,7 +30,7 @@ static constexpr int BORDERS_SIZE = 29;
 
 // Ball constants
 static constexpr float BALL_DIAMETER = 20.0;
-static constexpr float BALL_SPEED    = 8.0;
+static constexpr float BALL_SPEED    = 10.0;
 
 // Bricks constants
 static constexpr int BRICK_ROWS    = 8;
@@ -35,16 +45,12 @@ static constexpr int BRICKS_Y_PADDING = 100 + BORDERS_SIZE; // The Y-axis paddin
 static constexpr int PLATE_WIDTH  = 115;
 static constexpr int PLATE_HEIGHT = 29;
 
-static constexpr float PLATE_SPEED = 10.0;
+static constexpr float PLATE_SPEED = 9.0;
 
-// Functions definitions
-float get_minimum(std::vector<float>);
+// Functions declarations
+int8_t sign(float);
 
-float get_maximum(std::vector<float>);
-
-float get_length(const std::vector<float> &);
-
-float get_length(float);
+void draw_score(const FontManager &, int, const Vector2f &, const std::string &, bool);
 
 bool intersect_AABB_AABB(Vector2f, Vector2f, Vector2f, Vector2f, Vector2f &);
 

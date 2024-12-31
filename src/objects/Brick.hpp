@@ -1,7 +1,13 @@
+/*
+ * INFO-F202 (2024 - 2025)
+ * Written with ❤︎ by Yassir Laghmouchi & Nabil El Muhur @ ULB
+ */
+
 #ifndef BRICK_HPP
 #define BRICK_HPP
 
-#include "GameObject.hpp"
+#include "../core/GameObject.hpp"
+#include "../core/SpriteManager.hpp"
 
 enum class BRICK_TYPE {
     WHITE, ORANGE, CYAN, GREEN, RED, BLUE, MAGENTA, YELLOW, SILVER, GOLDEN
@@ -15,7 +21,9 @@ struct BrickTypeData {
 
 class Brick : public GameObject {
 public:
-    Brick(Vector2f _position, Vector2f _direction, float _speed, BRICK_TYPE _brick_type);
+    Brick(SpriteManager _sprite_manager, Vector2f _position, BRICK_TYPE _brick_type);
+
+    BRICK_TYPE get_brick_type() const;
 
     BrickTypeData get_brick_type_data() const;
 
@@ -25,7 +33,13 @@ public:
 
     void set_hits_needed(int _hits_needed);
 
+    void draw() const;
+
 private:
+    SpriteManager sprite_manager;
+
+    BRICK_TYPE brick_type;
+
     BrickTypeData brick_type_data;
 
     int hits_needed;

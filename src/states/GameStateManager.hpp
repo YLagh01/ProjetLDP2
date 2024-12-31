@@ -1,3 +1,8 @@
+/*
+ * INFO-F202 (2024 - 2025)
+ * Written with ❤︎ by Yassir Laghmouchi & Nabil El Muhur @ ULB
+ */
+
 #ifndef GAMESTATEMANAGER_HPP
 #define GAMESTATEMANAGER_HPP
 
@@ -16,7 +21,7 @@ public:
 
     void update() const;
 
-    void input(const ALLEGRO_MOUSE_STATE &, const ALLEGRO_MOUSE_STATE &, ALLEGRO_EVENT_TYPE, int) const;
+    void input(const ALLEGRO_MOUSE_STATE &, ALLEGRO_EVENT_TYPE, int) const;
 
     void render(const FontManager &) const;
 };

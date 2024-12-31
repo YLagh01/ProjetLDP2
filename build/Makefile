@@ -6,14 +6,14 @@ CXXFLAGS := -Wall -Wextra -pedantic
 ALLEGRO_FLAGS := $(shell pkg-config allegro-5 allegro_font-5 allegro_ttf-5 allegro_image-5 allegro_primitives-5 --cflags --libs)
 
 # Source files
-SRC_DIR = ../src
+SRC_DIR := ../src
 
-CORE_DIR   = $(SRC_DIR)/core
-STATES_DIR = $(SRC_DIR)/states
+# Recursively finding .cpp source files in subdirectories
+define recursive_find
+	$(wildcard $1/*.cpp) $(foreach subdir, $(wildcard $1/*), $(call recursive_find,$(subdir)))
+endef
 
-SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp) \
-			$(wildcard $(CORE_DIR)/*.cpp) \
-            $(wildcard $(STATES_DIR)/*.cpp)
+SRC_FILES := $(call recursive_find,$(SRC_DIR))
 
 # Output binary
 TARGET = arkanoid

@@ -1,15 +1,16 @@
+/*
+ * INFO-F202 (2024 - 2025)
+ * Written with ❤︎ by Yassir Laghmouchi & Nabil El Muhur @ ULB
+ */
+
 #ifndef PLATE_HPP
 #define PLATE_HPP
 
-#include "GameObject.hpp"
+#include "../core/GameObject.hpp"
 
 class Plate : public GameObject {
 public:
     Plate(ALLEGRO_BITMAP *_bitmap, Vector2f _position, Vector2f _direction, float _speed);
-
-    ALLEGRO_BITMAP *get_bitmap() const;
-
-    void set_bitmap(ALLEGRO_BITMAP *);
 
     bool check_collision_walls() const;
 
@@ -22,8 +23,6 @@ public:
     void set_moving_right(bool);
 
 private:
-    ALLEGRO_BITMAP *bitmap;
-
     bool moving_left;
     bool moving_right;
 };

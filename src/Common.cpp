@@ -1,35 +1,60 @@
+/*
+ * INFO-F202 (2024 - 2025)
+ * Written with ❤︎ by Yassir Laghmouchi & Nabil El Muhur @ ULB
+ */
+
 #include "Common.hpp"
 
+#include <string>
 #include <cmath>
-#include <vector>
 
-float get_minimum(std::vector<float> values) {
-    float minimum = values[0];
-    for (const float value: values) {
-        if (value < minimum) { minimum = value; }
+int8_t sign(const float value) {
+    return (value < 0) ? -1 : 1;
+}
+
+void draw_score(const FontManager &font_manager, const int score, const Vector2f &position, const std::string &label,
+                const bool one_line) {
+    static const ALLEGRO_COLOR label_color = al_map_rgb(255, 255, 255);
+    static const ALLEGRO_COLOR value_color = al_map_rgb(255, 0, 0);
+
+    const ALLEGRO_FONT *font = font_manager.main_font_small;
+
+    // If the score needs to be drawn on one line
+    if (one_line) {
+        const std::string label_with_space   = std::string(label) + " ";
+
+        const char *score_label_string = label_with_space.c_str();
+        const char *score_value_string = std::to_string(score).c_str();
+
+        // Calculating the total width of the two strings combined
+        const int score_label_width = al_get_text_width(font, score_label_string);
+        const int score_value_width = al_get_text_width(font, score_value_string);
+        const int score_total_width = score_label_width + score_value_width;
+
+        // Calculating the resulting padding of the score text for the X axis
+        const float final_padding_x = position.x - static_cast<float>(score_total_width * 0.5);
+
+        // Drawing the score label and value
+        al_draw_text(font, label_color, final_padding_x, position.y, ALLEGRO_ALIGN_LEFT, score_label_string);
+        al_draw_text(font, value_color, final_padding_x + static_cast<float>(score_label_width), position.y,
+                     ALLEGRO_ALIGN_LEFT, score_value_string);
     }
-    return minimum;
-}
+    // If the score can be drawn on two separate lines (one for the label, one for the value)
+    else {
+        static constexpr int score_spacing = 10;
 
-float get_maximum(std::vector<float> values) {
-    float maximum = values[0];
-    for (const float value: values) {
-        if (value > maximum) { maximum = value; }
+        const char *score_value_string = std::to_string(score).c_str();
+
+        // Drawing the score label and value
+        al_draw_text(font, label_color, position.x, position.y, ALLEGRO_ALIGN_CENTER, label.c_str());
+        al_draw_text(font, value_color, position.x, position.y + MAIN_FONT_SIZE_SMALL + score_spacing,
+                     ALLEGRO_ALIGN_CENTER, score_value_string);
     }
-    return maximum;
-}
-
-float get_length(const std::vector<float> &vector) {
-    return std::sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
-}
-
-float get_length(const float vector) {
-    return std::sqrt(vector * vector + vector * vector);
 }
 
 bool intersect_AABB_AABB(const Vector2f source_origin, const Vector2f source_size,
                          const Vector2f target_origin, const Vector2f target_size,
-                         Vector2f &intersection_normal) {
+                         Vector2f &     intersection_normal) {
     // Calculating the upper bounds of each of the AABBs
     const float source_upper_x = source_origin.x + source_size.x;
     const float source_upper_y = source_origin.y + source_size.y;
@@ -44,7 +69,7 @@ bool intersect_AABB_AABB(const Vector2f source_origin, const Vector2f source_siz
         return false;
     }
 
-    // Calculating the length of the overlap on the two axes
+    // Calculating the distance of the overlap on the two axes
     const float overlap_x = std::min(source_upper_x, target_upper_x) - std::max(source_origin.x, target_origin.x);
     const float overlap_y = std::min(source_upper_y, target_upper_y) - std::max(source_origin.y, target_origin.y);
 

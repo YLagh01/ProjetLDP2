@@ -1,9 +1,12 @@
+/*
+ * INFO-F202 (2024 - 2025)
+ * Written with ❤︎ by Yassir Laghmouchi & Nabil El Muhur @ ULB
+ */
+
 #include "Ball.hpp"
 
-#include "../Common.hpp"
-
-Ball::Ball(const Vector2f _position, const Vector2f _direction, const float _speed): GameObject(
-    _position, _direction, Vector2f{BALL_DIAMETER, BALL_DIAMETER}, _speed) {
+Ball::Ball(ALLEGRO_BITMAP *_bitmap, const Vector2f _position, const Vector2f _direction,
+           const float _speed): GameObject(_bitmap, _position, _direction, Vector2f{BALL_DIAMETER, BALL_DIAMETER}, _speed) {
 }
 
 Vector2f Ball::get_bounce_direction(const Vector2f init_direction, const Vector2f normal) {
