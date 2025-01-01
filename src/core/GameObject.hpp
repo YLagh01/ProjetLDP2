@@ -10,6 +10,10 @@
 
 #include <allegro5/bitmap.h>
 
+#include <memory>
+#include <vector>
+#include <algorithm>
+
 class GameObject {
 public:
     GameObject(ALLEGRO_BITMAP *_bitmap, Vector2f _position, Vector2f _direction, Vector2f _size, float _speed);
@@ -36,7 +40,11 @@ public:
 
     void move();
 
+    void move(float, Vector2f);
+
     void draw() const;
+
+    bool intersects(Vector2f, Vector2f, Vector2f &);
 
 protected:
     ALLEGRO_BITMAP *bitmap;
@@ -49,5 +57,17 @@ protected:
 
     float speed;
 };
+
+// Template function to be able to erase game objects from their vectors no matter the child class
+template<typename T>
+void erase_game_object(std::vector<std::shared_ptr<T> > &objects, const T *object) {
+    auto it = std::find_if(objects.begin(), objects.end(), [object](const std::shared_ptr<T> &ptr) {
+        return ptr.get() == object;
+    });
+
+    if (it != objects.end()) {
+        objects.erase(it);
+    }
+}
 
 #endif

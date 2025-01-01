@@ -1,6 +1,6 @@
 # Compiler and flags
 CXX      := g++
-CXXFLAGS := -Wall -Wextra -pedantic
+CXXFLAGS := -std=c++17 -Wall -Wextra -pedantic
 
 # Allegro libraries
 ALLEGRO_FLAGS := $(shell pkg-config allegro-5 allegro_font-5 allegro_ttf-5 allegro_image-5 allegro_primitives-5 --cflags --libs)

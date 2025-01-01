@@ -71,8 +71,8 @@ int main(int /* argc */, char ** /* argv */) {
     GameStateManager game_state_manager;
     SpriteManager    sprite_manager{};
     FontManager      font_manager{};
-    // Making the play state the initial state on runtime
-    game_state_manager.update_state(std::make_unique<PlayState>(&game_state_manager, sprite_manager));
+    // Making the play state the initial state on runtime, starting at stage 0
+    game_state_manager.update_state(std::make_unique<PlayState>(&game_state_manager, sprite_manager, 0));
 
     bool running = true;
     ALLEGRO_EVENT event;

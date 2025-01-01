@@ -9,7 +9,9 @@
 
 SpriteManager::SpriteManager() {
     // Background
-    background_bitmap = al_load_bitmap("../res/sprites/background/background_2.png");
+    background_0_bitmap = al_load_bitmap("../res/sprites/background/background_0.png");
+    background_1_bitmap = al_load_bitmap("../res/sprites/background/background_1.png");
+    background_2_bitmap = al_load_bitmap("../res/sprites/background/background_2.png");
 
     // Health bar
     health_bar_full     = al_load_bitmap("../res/sprites/health_bar/health_bar_full.png");

@@ -12,8 +12,6 @@ class Plate : public GameObject {
 public:
     Plate(ALLEGRO_BITMAP *_bitmap, Vector2f _position, Vector2f _direction, float _speed);
 
-    bool check_collision_walls() const;
-
     bool get_moving_left() const;
 
     void set_moving_left(bool);
@@ -21,6 +19,10 @@ public:
     bool get_moving_right() const;
 
     void set_moving_right(bool);
+
+    bool check_collisions_walls() const;
+
+    void change_sprite(ALLEGRO_BITMAP *);
 
 private:
     bool moving_left;

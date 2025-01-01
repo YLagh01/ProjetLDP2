@@ -12,8 +12,10 @@ class SpriteManager {
 public:
     SpriteManager();
 
-    // Background
-    ALLEGRO_BITMAP *background_bitmap;
+    // Backgrounds
+    ALLEGRO_BITMAP *background_0_bitmap;
+    ALLEGRO_BITMAP *background_1_bitmap;
+    ALLEGRO_BITMAP *background_2_bitmap;
 
     // Health bar
     ALLEGRO_BITMAP *health_bar_full;
