@@ -6,6 +6,7 @@
 #ifndef SPRITEMANAGER_HPP
 #define SPRITEMANAGER_HPP
 
+#include <unordered_map>
 #include <allegro5/bitmap.h>
 
 class SpriteManager {
@@ -21,6 +22,8 @@ public:
     ALLEGRO_BITMAP *health_bar_full;
     ALLEGRO_BITMAP *health_bar_two_left;
     ALLEGRO_BITMAP *health_bar_one_left;
+
+    std::unordered_map<int, ALLEGRO_BITMAP *> health_bar_sprite_map;
 
     // Bricks
     ALLEGRO_BITMAP *brick_bitmap;
@@ -53,6 +56,9 @@ public:
 
     ALLEGRO_BITMAP *player_powerup_bitmap;
     ALLEGRO_BITMAP *player_powerup_letter_bitmap;
+
+    // Laser
+    ALLEGRO_BITMAP *laser_bitmap;
 };
 
 #endif

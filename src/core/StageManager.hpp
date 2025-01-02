@@ -8,6 +8,6 @@
 
 #include "../objects/Brick.hpp"
 
-void init_stage(SpriteManager, uint8_t, ALLEGRO_BITMAP *&, std::vector<std::shared_ptr<Brick> > &);
+void init_stage(const SpriteManager&, uint8_t, ALLEGRO_BITMAP *&, std::vector<std::shared_ptr<Brick> > &);
 
 #endif

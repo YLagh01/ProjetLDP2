@@ -11,10 +11,10 @@
 #include "PlayState.hpp"
 
 #include <string>
-#include <memory>
 
-GameOverState::GameOverState(GameStateManager *_game_state_manager, const SpriteManager &_sprite_manager, const bool _game_won,
-    const int _final_score, const int _current_stage_index): GameState(_game_state_manager, _sprite_manager),
+GameOverState::GameOverState(GameStateManager *_game_state_manager, const SpriteManager &_sprite_manager,
+    const int _final_score, const int _current_stage_index, const bool _game_won):
+    GameState(_game_state_manager, _sprite_manager),
     game_won(_game_won), final_score(_final_score), current_stage_index(_current_stage_index) {
 }
 

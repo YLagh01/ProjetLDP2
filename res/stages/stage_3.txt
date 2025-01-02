@@ -1,11 +1,15 @@
-background_0
- , , , , , , , , , , , , ,
- , , , , , , , , , , , , ,
- , , , , , , , , , , , , ,
- , , , , , , , , , , , , ,
- , , , , , , , , , , , , ,
- , , , , , , , , , , , , ,
- , , , , , , , , , , , , ,
- , , , , , , , , , , , , ,
- , , , , , , , , , , , , ,
- , , , , ,GO,GO,GR,GR, , , , ,
+background_1
+YE,YE,YE,YE,YE,YE,YE,YE,YE,YE,YE,YE,YE,YE
+MA,MA,MA,MA,MA,MA,MA,MA,MA,MA,MA,MA,MA,MA
+BL,BL,BL,BL,BL,BL,BL,BL,BL,BL,BL,BL,BL,BL
+RE,RE,RE,RE,RE,RE,RE,RE,RE,RE,RE,RE,RE,RE
+GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR
+CY,CY,CY,CY,CY,CY,CY,CY,CY,CY,CY,CY,CY,CY
+OR,OR[C],OR[S],OR[P],OR,OR,OR,OR[D],OR[E],OR,OR,OR,OR,OR
+WH,WH,WH,WH,WH,WH,WH,WH,WH,WH,WH,WH,WH,WH
+ , , , , , , , , , , , , , ,
+ , , , , , , , , , , , , , ,
+ , , , , , , , , , , , , , ,
+ , , , , , , , , , , , , , ,
+ , , , , , , , , , , , , , ,
+ , , , , , ,RE[L],RE[L], , , , , , ,

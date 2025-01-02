@@ -10,7 +10,7 @@
 
 class GameOverState final : public GameState {
 public:
-    explicit GameOverState(GameStateManager *_game_state_manager, const SpriteManager &_sprite_manager, bool _game_won, int _final_score, int _current_stage_index);
+    explicit GameOverState(GameStateManager *_game_state_manager, const SpriteManager &_sprite_manager, int _final_score, int _current_stage_index, bool _game_won);
 
     void update() override;
 

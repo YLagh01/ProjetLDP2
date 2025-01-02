@@ -7,8 +7,9 @@
 
 #include <cmath>
 
-Ball::Ball(ALLEGRO_BITMAP *_bitmap, const Vector2f _position, const Vector2f _direction, const float _speed,
-           const bool _is_main_ball): GameObject(_bitmap, _position, _direction, Vector2f{}, _speed), is_main_ball(_is_main_ball) {
+Ball::Ball(const SpriteManager &_sprite_manager, const Vector2f _position, const Vector2f _direction,
+           const float _speed): GameObject(_sprite_manager.ball_bitmap, _position, _direction, Vector2f{}, _speed),
+                                sprite_manager(_sprite_manager) {
     size = Vector2f{
         static_cast<float>(al_get_bitmap_width(bitmap)),
         static_cast<float>(al_get_bitmap_height(bitmap))
@@ -25,9 +26,11 @@ Vector2f Ball::get_bounce_direction(const Vector2f init_direction, const Vector2
     };
 }
 
-void Ball::handle_collisions_bricks(std::vector<std::shared_ptr<Brick> > &bricks, std::vector<std::shared_ptr<Powerup> > &powerups, int &score) {
+void Ball::handle_collisions_bricks(std::vector<std::shared_ptr<Brick> > &  bricks,
+                                    std::vector<std::shared_ptr<Powerup> > &powerups,
+                                    const std::shared_ptr<Powerup> &active_powerup, int &score) {
     // Checking for collisions with the bricks
-    Vector2f brick_intersection_normal{};
+    Vector2f                     brick_intersection_normal{};
     const std::shared_ptr<Brick> intersected_brick = Brick::intersects_brick(bricks, this, brick_intersection_normal);
 
     // If a brick was intersected
@@ -36,7 +39,7 @@ void Ball::handle_collisions_bricks(std::vector<std::shared_ptr<Brick> > &bricks
         direction = get_bounce_direction(direction, brick_intersection_normal);
 
         // Handling what happens when a brick is destroyed
-        intersected_brick->on_brick_destroy(bricks, powerups, score);
+        intersected_brick->on_destroy(bricks, powerups, active_powerup, score);
     }
 }
 
@@ -71,10 +74,19 @@ void Ball::handle_collisions_walls() {
             direction = get_bounce_direction(direction, LEFT_VECTOR);
         }
         // Top side
-        else if (position.y <= BORDERS_SIZE) { // Top side
+        else if (position.y <= BORDERS_SIZE) {
+            // Top side
             direction = get_bounce_direction(direction, BOTTOM_VECTOR);
         }
     }
+}
+
+void Ball::handle_collisions(std::vector<std::shared_ptr<Brick> > &  bricks, const Plate &plate,
+                             std::vector<std::shared_ptr<Powerup> > &powerups,
+                             const std::shared_ptr<Powerup> &active_powerup, int &score) {
+    handle_collisions_bricks(bricks, powerups, active_powerup, score);
+    handle_collisions_plate(plate, active_powerup);
+    handle_collisions_walls();
 }
 
 void Ball::catch_ball(const Plate &plate) {

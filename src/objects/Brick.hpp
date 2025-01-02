@@ -19,8 +19,8 @@ enum class BRICK_TYPE {
 
 struct BrickTypeData {
     ALLEGRO_COLOR color;
-    int points_bonus;
-    int hits_needed;
+    int           points_bonus;
+    int           hits_needed;
 };
 
 static const std::unordered_map<std::string, const BRICK_TYPE> code_to_brick_type = {
@@ -58,14 +58,15 @@ public:
 
     static std::shared_ptr<Brick> intersects_brick(std::vector<std::shared_ptr<Brick> > &, GameObject *, Vector2f &);
 
-    void on_brick_destroy(std::vector<std::shared_ptr<Brick> > &, std::vector<std::shared_ptr<Powerup> > &, int &);
+    void on_destroy(std::vector<std::shared_ptr<Brick> > &, std::vector<std::shared_ptr<Powerup> > &,
+                    const std::shared_ptr<Powerup> &, int &);
 
 private:
     SpriteManager sprite_manager;
 
-    BRICK_TYPE brick_type;
+    BRICK_TYPE type;
 
-    BrickTypeData brick_type_data;
+    BrickTypeData type_data;
 
     int hits_needed;
 

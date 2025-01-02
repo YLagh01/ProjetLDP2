@@ -15,11 +15,12 @@
 /*         CLASS DEFINITION         */
 /************************************/
 
-PlayState::PlayState(GameStateManager *_game_state_manager, const SpriteManager &_sprite_manager, const int _stage_index)
-    : GameState(_game_state_manager, _sprite_manager),
-      plate(sprite_manager.plate_small_bitmap, Vector2f{}, Vector2f{}, PLATE_SPEED),
-      ball(sprite_manager.ball_bitmap        , Vector2f{}, Vector2f{}, BALL_SPEED, true),
-      stage_index(_stage_index) {
+PlayState::PlayState(GameStateManager *_game_state_manager, const SpriteManager &_sprite_manager,
+                     const int _stage_index):
+                     GameState(_game_state_manager, _sprite_manager),
+                     stage_index(_stage_index),
+                     plate(sprite_manager.plate_small_bitmap, Vector2f{}, Vector2f{}, PLATE_SPEED),
+                     ball(sprite_manager, Vector2f{}, Vector2f{}, BALL_SPEED) {
     // Setting up the plate and ball
     setup_plate_and_ball();
 
@@ -30,10 +31,6 @@ PlayState::PlayState(GameStateManager *_game_state_manager, const SpriteManager 
     high_score = read_high_score();
 }
 
-/************************************/
-/*     STAGE INITIALISATION CODE    */
-/************************************/
-
 void PlayState::setup_plate_and_ball() {
     // Setting the plate's size to match its sprite
     plate.set_size(Vector2f{
@@ -42,10 +39,12 @@ void PlayState::setup_plate_and_ball() {
     });
 
     // Setting the plate's initial position
-    plate.set_position(Vector2f{(WINDOW_WIDTH - plate.get_size().x) / 2, 750});
+    plate.set_position(Vector2f{(WINDOW_WIDTH - plate.get_size().x) / 2, WINDOW_HEIGHT - PLATE_Y_PADDING});
 
     // Setting the ball's initial position and direction
-    ball.set_position(Vector2f{static_cast<float>((WINDOW_WIDTH - ball.get_size().x) * 0.5), plate.get_position().y - ball.get_size().y});
+    ball.set_position(Vector2f{
+        static_cast<float>((WINDOW_WIDTH - ball.get_size().x) * 0.5), plate.get_position().y - ball.get_size().y
+    });
     ball.set_direction(UP_VECTOR);
 }
 
@@ -59,26 +58,18 @@ void PlayState::update() {
         return;
     }
 
-    // If the catch powerup is active and if enough time has passed since the ball was caught, release it
-    if (active_powerup != nullptr && active_powerup->has_type(POWERUP_TYPE::CATCH) && ball.caught) {
-        if (current_time_milliseconds() - ball.caught_time > BALL_RELEASE_AFTER_MS) {
-            ball.caught = false;
-        } else {
-            // Moving the ball with the plate's speed and direction if there are no collisions in keyboard mode
-            if (!plate.check_collisions_walls() && !mouse_control_mode) {
-                ball.move(plate.get_speed(), plate.get_direction());
-            }
-        }
+    // Handling powerups updates
+    if (active_powerup != nullptr) {
+        active_powerup->on_update(bricks, plate, ball, clone_balls, powerups, active_powerup, active_slow_powerups,
+                                  score, mouse_control_mode);
     }
 
     // Moving the ball with its own speed and direction if it wasn't caught by the plate
     if (!ball.caught) {
         ball.move();
     }
-
-    ball.handle_collisions_bricks(bricks, powerups, score);
-    ball.handle_collisions_plate(plate, active_powerup);
-    ball.handle_collisions_walls();
+    // Handling the ball's collisions
+    ball.handle_collisions(bricks, plate, powerups, active_powerup, score);
 
     // Moving the plate and checking for collisions with the stage's walls
     if (!plate.check_collisions_walls() && !mouse_control_mode) {
@@ -90,86 +81,34 @@ void PlayState::update() {
         plate.set_direction(NULL_VECTOR);
     }
 
-    // Moving the powerups to make them fall vertically
-    std::shared_ptr<Powerup> intersected_powerup = nullptr;
+    // Handling powerups collisions with the plate
+    Powerup::handle_collisions_plate(powerups, active_powerup, active_slow_powerups, plate, ball, clone_balls,
+                                     lives_remaining);
 
-    for (const auto &powerup : powerups) {
-        if (powerup != nullptr) {
-            // Making powerups fall down
-            powerup->move();
-
-            // Removing the powerup object from the powerups vector if it falls outside the window's bounds
-            if (powerup->get_position().y > WINDOW_HEIGHT) {
-                erase_game_object(powerups, powerup.get());
-            }
-
-            // Checking for collisions of the powerups with the plate
-            Vector2f powerup_intersection_normal{};
-            const bool intersects_powerup = plate.intersects(powerup->get_position(), powerup->get_size(), powerup_intersection_normal);
-
-            // Found a collision with a powerup
-            if (intersects_powerup) {
-                intersected_powerup = powerup;
-            }
-        }
-    }
-
-    // If there was a collision with a powerup
-    if (intersected_powerup != nullptr) {
-        // Removing the powerup object from the powerups vector
-        erase_game_object(powerups, intersected_powerup.get());
-
-        // Handling what happens on deactivation of the previous active powerup if there is one
-        if (active_powerup != nullptr) {
-            active_powerup->on_deactivation(plate, ball);
-        }
-        // Updating the active powerup
-        active_powerup = intersected_powerup;
-        // Handling what happens on activation of the new active powerup
-        active_powerup->on_activation(plate, lives_remaining);
-    }
-
-    for (const auto &laser : lasers) {
+    // Handling laser powerup updates
+    for (const auto &laser: lasers) {
         if (laser != nullptr) {
-            // Making lasers move up
-            laser->move();
-
-            // Removing the laser object from the lasers vector if it goes outside the window's bounds
-            if (laser->get_position().y < 0) {
-                erase_game_object(lasers, laser.get());
-            }
-
-            // Checking for collisions with the bricks
-            Vector2f brick_intersection_normal{};
-            const std::shared_ptr<Brick> intersected_brick = Brick::intersects_brick(bricks, laser.get(), brick_intersection_normal);
-
-            // If a brick was intersected
-            if (intersected_brick != nullptr) {
-                // Removing the laser object from the lasers vector
-                erase_game_object(lasers, laser.get());
-                // Handling what happens when a brick is destroyed
-                intersected_brick->on_brick_destroy(bricks, powerups, score);
-            }
+            laser->on_update(lasers, bricks, powerups, active_powerup, score);
         }
     }
 
-    // If the ball goes below the plate height
+    // If the main ball goes below the plate's height
     if (ball.get_position().y > plate.get_position().y + plate.get_size().y) {
         lives_remaining--;
 
         if (lives_remaining <= 0) {
             // Game over, defeat (no lives remaining)
             write_high_score(score, high_score, false);
-            game_state_manager->update_state(std::make_unique<GameOverState>(game_state_manager, sprite_manager, false, score, stage_index));
-        }
-        else {
+            game_state_manager->update_state(
+                std::make_unique<GameOverState>(game_state_manager, sprite_manager, score, stage_index, false));
+        } else {
             // Lost one life, resetting the plate and ball
             setup_plate_and_ball();
-            game_started  = false;
+            game_started = false;
 
-            // Handling what happens on deactivation of the previous active powerup if there is one
+            // Deactivating the active powerup on the player's death
             if (active_powerup != nullptr) {
-                active_powerup->on_deactivation(plate, ball);
+                active_powerup->on_deactivation(plate, ball, active_slow_powerups);
             }
             active_powerup = nullptr;
         }
@@ -178,7 +117,7 @@ void PlayState::update() {
     bool has_won = true;
 
     // If all the non-golden bricks have been destroyed
-    for (const auto &brick : bricks) {
+    for (const auto &brick: bricks) {
         if (brick->get_brick_type() != BRICK_TYPE::GOLDEN) {
             has_won = false;
         }
@@ -187,7 +126,8 @@ void PlayState::update() {
     // Game over, victory
     if (has_won) {
         write_high_score(score, high_score, false);
-        game_state_manager->update_state(std::make_unique<GameOverState>(game_state_manager, sprite_manager, true, score, stage_index));
+        game_state_manager->update_state(
+            std::make_unique<GameOverState>(game_state_manager, sprite_manager, score, stage_index, true));
     }
 
     // Updating the high score if the current score is greater
@@ -203,9 +143,9 @@ void PlayState::update() {
 void PlayState::input(const ALLEGRO_MOUSE_STATE &mouse_state, const ALLEGRO_EVENT_TYPE event, const int keycode) {
     // Starting the game on the first plate movement from either keyboard inputs or the left click
     if ((event == ALLEGRO_EVENT_KEY_DOWN && (
-        keycode == ALLEGRO_KEY_A || keycode == ALLEGRO_KEY_Q ||
-        keycode == ALLEGRO_KEY_P || keycode == ALLEGRO_KEY_D
-        ))
+             keycode == ALLEGRO_KEY_A || keycode == ALLEGRO_KEY_Q ||
+             keycode == ALLEGRO_KEY_P || keycode == ALLEGRO_KEY_D
+         ))
         || al_mouse_button_down(&mouse_state, 1)) {
         if (!game_started) {
             game_started = true;
@@ -215,8 +155,7 @@ void PlayState::input(const ALLEGRO_MOUSE_STATE &mouse_state, const ALLEGRO_EVEN
     if (al_mouse_button_down(&mouse_state, 1) && !mouse_control_mode) {
         // Enter mouse plate control with left click
         mouse_control_mode = true;
-    }
-    else if (al_mouse_button_down(&mouse_state, 2) && mouse_control_mode) {
+    } else if (al_mouse_button_down(&mouse_state, 2) && mouse_control_mode) {
         // Leave mouse plate control with right click (back to keyboard inputs)
         mouse_control_mode = false;
     }
@@ -238,9 +177,13 @@ void PlayState::input(const ALLEGRO_MOUSE_STATE &mouse_state, const ALLEGRO_EVEN
     // Handling keyboard inputs
     if (event == ALLEGRO_EVENT_KEY_DOWN) {
         key_down(keycode);
-    }
-    else if (event == ALLEGRO_EVENT_KEY_UP) {
+    } else if (event == ALLEGRO_EVENT_KEY_UP) {
         key_up(keycode);
+    }
+
+    // Handling powerups keyboard inputs
+    if (active_powerup != nullptr && game_started) {
+        active_powerup->on_input(keycode, plate, ball, lasers);
     }
 }
 
@@ -261,20 +204,8 @@ void PlayState::key_down(const int keycode) {
             const int stage_index_increment = keycode == ALLEGRO_KEY_F2 ? -1 + STAGES_COUNT : 1;
             const int next_stage_index      = (stage_index + stage_index_increment) % STAGES_COUNT;
             // Updating the play state to load the next stage
-            game_state_manager->update_state(std::make_unique<PlayState>(game_state_manager, sprite_manager, next_stage_index));
-            break;
-        }
-        case ALLEGRO_KEY_SPACE: {
-            // Handling laser and catch powerups if they're active and if the game started
-            if (active_powerup != nullptr && game_started) {
-                if (active_powerup->has_type(POWERUP_TYPE::LASER)) {
-                    // Spawning a laser object
-                    Laser::spawn_laser(lasers, plate);
-                }
-                else if (active_powerup->has_type(POWERUP_TYPE::CATCH) && ball.caught) {
-                    ball.caught = false;
-                }
-            }
+            game_state_manager->update_state(
+                std::make_unique<PlayState>(game_state_manager, sprite_manager, next_stage_index));
             break;
         }
         // Left key (move plate to the left)
@@ -295,8 +226,7 @@ void PlayState::key_down(const int keycode) {
             }
             break;
         }
-        default:
-            break;
+        default: break;
     }
 }
 
@@ -310,35 +240,19 @@ void PlayState::key_up(const int keycode) {
         case ALLEGRO_KEY_A:
         case ALLEGRO_KEY_Q:
             plate.set_moving_left(false);
-        break;
+            break;
         // Right key (move plate to the right)
         case ALLEGRO_KEY_P:
         case ALLEGRO_KEY_D:
             plate.set_moving_right(false);
-        break;
-        default:
             break;
+        default: break;
     }
 }
 
 /************************************/
 /*            RENDER CODE           */
 /************************************/
-
-void PlayState::draw_health_bar() const {
-    ALLEGRO_BITMAP *health_bar_bitmap = nullptr;
-    // Switching the health bar sprite depending on the remaining lives
-    switch (lives_remaining) {
-        case 3: health_bar_bitmap = sprite_manager.health_bar_full    ; break;
-        case 2: health_bar_bitmap = sprite_manager.health_bar_two_left; break;
-        case 1: health_bar_bitmap = sprite_manager.health_bar_one_left; break;
-        default: break;
-    }
-    // Drawing the health bar if it's properly defined
-    if (health_bar_bitmap != nullptr) {
-        al_draw_bitmap(health_bar_bitmap, 0, static_cast<float>(WINDOW_HEIGHT - al_get_bitmap_height(health_bar_bitmap)), 0);
-    }
-}
 
 void PlayState::render(const FontManager &font_manager) const {
     // Drawing the background image
@@ -347,8 +261,17 @@ void PlayState::render(const FontManager &font_manager) const {
     // Drawing the bricks
     Brick::draw_bricks(sprite_manager, bricks);
 
-    // Drawing the plate and the ball
+    // Drawing the plate
     plate.draw();
+
+    for (const auto &clone_ball: clone_balls) {
+        if (clone_ball != nullptr) {
+            // Drawing the clone balls with a darker tint to differentiate them from the main ball
+            al_draw_tinted_bitmap(clone_ball->get_bitmap(), al_map_rgb(180, 180, 180), clone_ball->get_position().x,
+                                  clone_ball->get_position().y, 0);
+        }
+    }
+    // Drawing the main ball
     ball.draw();
 
     // Drawing the powerups
@@ -366,15 +289,20 @@ void PlayState::render(const FontManager &font_manager) const {
     }
 
     // Drawing the health bar
-    draw_health_bar();
+    const auto health_bar_sprite_it = sprite_manager.health_bar_sprite_map.find(lives_remaining);
+    if (health_bar_sprite_it != sprite_manager.health_bar_sprite_map.end()) {
+        al_draw_bitmap(health_bar_sprite_it->second, 0,
+                       static_cast<float>(WINDOW_HEIGHT - al_get_bitmap_height(health_bar_sprite_it->second)), 0);
+    }
 
     // Drawing current and high scores
     static constexpr float top_text_padding = BORDERS_SIZE + MAIN_FONT_SIZE_SMALL;
 
     draw_score(font_manager, score, Vector2f{BORDERS_SIZE * 4, top_text_padding}, "SCORE", false);
-    draw_score(font_manager, high_score, Vector2f{WINDOW_WIDTH - BORDERS_SIZE * 4, top_text_padding}, "HIGHSCORE", false);
-
+    draw_score(font_manager, high_score, Vector2f{WINDOW_WIDTH - BORDERS_SIZE * 4, top_text_padding}, "HIGHSCORE",
+               false);
+    // Drawing the current stage index
     const std::string stage_string = "STAGE " + std::to_string(stage_index + 1);
-    al_draw_text(font_manager.secondary_font_small, al_map_rgb(255, 255, 255), WINDOW_WIDTH * 0.5, top_text_padding,
+    al_draw_text(font_manager.secondary_font_small, white_color, WINDOW_WIDTH * 0.5, top_text_padding,
                  ALLEGRO_ALIGN_CENTER, stage_string.c_str());
 }

@@ -6,7 +6,6 @@
 #include "Common.hpp"
 
 #include <chrono>
-#include <string>
 
 long current_time_milliseconds() {
     // Yields the current time since epoch in milliseconds as a long value
@@ -15,7 +14,7 @@ long current_time_milliseconds() {
 
 void draw_score(const FontManager &font_manager, const int score, const Vector2f &position, const std::string &label,
                 const bool one_line) {
-    static const ALLEGRO_COLOR label_color = al_map_rgb(255, 255, 255);
+    static const ALLEGRO_COLOR label_color = white_color;
     static const ALLEGRO_COLOR value_color = al_map_rgb(255, 0, 0);
 
     const ALLEGRO_FONT *font = font_manager.main_font_small;

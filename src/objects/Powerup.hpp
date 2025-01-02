@@ -9,9 +9,10 @@
 #include "../core/GameObject.hpp"
 #include "../core/SpriteManager.hpp"
 
-#include "Plate.hpp"
+#include "Laser.hpp"
 
 #include <unordered_map>
+#include <queue>
 
 class Ball;
 
@@ -21,12 +22,12 @@ struct PowerupSprites {
 };
 
 static const std::unordered_map<std::string, const POWERUP_TYPE> code_to_powerup_type = {
-    {"L", POWERUP_TYPE::LASER   },
-    {"E", POWERUP_TYPE::ENLARGE },
-    {"C", POWERUP_TYPE::CATCH   },
-    {"S", POWERUP_TYPE::SLOW    },
-    {"D", POWERUP_TYPE::DISRUPT },
-    {"P", POWERUP_TYPE::PLAYER  }
+    {"L", POWERUP_TYPE::LASER  },
+    {"E", POWERUP_TYPE::ENLARGE},
+    {"C", POWERUP_TYPE::CATCH  },
+    {"S", POWERUP_TYPE::SLOW   },
+    {"D", POWERUP_TYPE::DISRUPT},
+    {"P", POWERUP_TYPE::PLAYER }
 };
 
 std::unordered_map<const POWERUP_TYPE, const PowerupSprites> get_powerup_bitmaps(const SpriteManager &);
@@ -39,14 +40,27 @@ public:
 
     bool has_type(POWERUP_TYPE) const;
 
-    void on_activation(Plate &, uint8_t &) const;
+    void on_activation(Plate &, Ball &, std::vector<std::shared_ptr<Ball> > &, std::vector<std::shared_ptr<Powerup> > &,
+                       std::queue<long> &, uint8_t &) const;
 
-    void on_deactivation(Plate &, Ball &) const;
+    void on_deactivation(Plate &, Ball &, std::queue<long> &) const;
+
+    void on_update(std::vector<std::shared_ptr<Brick> > &, const Plate &, Ball &, std::vector<std::shared_ptr<Ball> > &,
+                   std::vector<std::shared_ptr<Powerup> > &, std::shared_ptr<Powerup> &, std::queue<long> &,
+                   int &, bool) const;
+
+    void on_input(int, const Plate &, Ball &, std::vector<std::shared_ptr<Laser> > &) const;
+
+    static void handle_collisions_plate(std::vector<std::shared_ptr<Powerup> > &, std::shared_ptr<Powerup> &,
+                                        std::queue<long> &, Plate &, Ball &, std::vector<std::shared_ptr<Ball> > &,
+                                        uint8_t &);
 
 private:
     SpriteManager sprite_manager;
 
     POWERUP_TYPE type;
+
+    static float get_slowed_ball_speed(const std::queue<long> &);
 };
 
 #endif
