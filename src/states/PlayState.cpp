@@ -111,6 +111,9 @@ void PlayState::update() {
                 active_powerup->on_deactivation(plate, ball, active_slow_powerups);
             }
             active_powerup = nullptr;
+
+            // Removing all clone balls if the player loses a life
+            clone_balls.assign(0, nullptr);
         }
     }
 

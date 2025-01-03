@@ -12,7 +12,7 @@
 
 void init_stage(const SpriteManager& sprite_manager, uint8_t stage_index, ALLEGRO_BITMAP *&background, std::vector<std::shared_ptr<Brick> > &bricks) {
     // Opening the input file stream
-    std::ifstream input_stage("../res/stages/stage_" + std::to_string(stage_index) + ".txt");
+    std::ifstream input_stage("res/stages/stage_" + std::to_string(stage_index) + ".txt");
 
     // Checking if the high score file is open
     if (!input_stage) {

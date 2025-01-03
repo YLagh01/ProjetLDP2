@@ -37,7 +37,7 @@ static const ALLEGRO_COLOR white_color = al_map_rgb(255, 255, 255);
 static constexpr int STAGES_COUNT = 7;
 
 // Path constants
-static const std::string HIGH_SCORE_PATH = "../res/player_data/high_score.txt";
+static const std::string HIGH_SCORE_PATH = "res/player_data/high_score.txt";
 
 // Bricks constants
 static constexpr float BRICK_WIDTH  = 53.55f;

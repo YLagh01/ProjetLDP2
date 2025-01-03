@@ -27,6 +27,14 @@ void must_init(const bool test, const char *description) {
 int main(int /* argc */, char ** /* argv */) {
     // Initialising Allegro modules
     must_init(al_init(), "allegro");
+
+    // Changing the working directory
+    if (!al_change_directory("../")) {
+        std::cerr << "Error: Failed to change working directory" << std::endl;
+        exit(1);
+    }
+
+    // Input modules
     must_init(al_install_keyboard(), "keyboard");
     must_init(al_install_mouse(), "mouse");
 
@@ -62,7 +70,7 @@ int main(int /* argc */, char ** /* argv */) {
     al_init_image_addon();
 
     // Setting the window icon
-    al_set_display_icon(display, al_load_bitmap("../res/sprites/icon.png"));
+    al_set_display_icon(display, al_load_bitmap("res/sprites/icon.png"));
 
     // Declaring core game variables
     // The game state manager helps us keep track of the current game state to call core functions (input, update, render) and update it if needed
@@ -96,7 +104,7 @@ int main(int /* argc */, char ** /* argv */) {
             case ALLEGRO_EVENT_TIMER:
                 // Accounting for game updates
                 game_state_manager.update();
-            // Drawing elements to the screen
+				// Drawing elements to the screen
                 game_state_manager.render(font_manager);
                 break;
             default:
