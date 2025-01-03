@@ -24,6 +24,11 @@ void init_stage(const SpriteManager& sprite_manager, uint8_t stage_index, ALLEGR
     std::string background_image;
     std::getline(input_stage, background_image);
 
+    // Removing potential carriage return
+    if (!background_image.empty() && background_image.back() == '\r') {
+        background_image.pop_back();
+    }
+
     if (background_image == "background_0") {
         background = sprite_manager.background_0_bitmap;
     }
@@ -53,6 +58,11 @@ void init_stage(const SpriteManager& sprite_manager, uint8_t stage_index, ALLEGR
 
         // Iterating the line's substrings delimited by ','
         while (std::getline(linestream, brick_encoding, ',')) {
+
+            // Removing potential carriage returns
+            if (!brick_encoding.empty() && brick_encoding.back() == '\r') {
+                brick_encoding.pop_back();
+            }
 
             // Using regex matching to decode the brick encoding pattern (i.e.: WH[L] for a white brick holding a laser powerup)
             std::smatch brick_encoding_match;
