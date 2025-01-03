@@ -26,8 +26,8 @@ void GameOverState::input(const ALLEGRO_MOUSE_STATE &mouse_state, const ALLEGRO_
     (void) keycode;
 
     if (event == ALLEGRO_EVENT_KEY_DOWN) {
-        // Advancing to the next stage only if the player has won
-        const int next_stage_index = game_won ? (current_stage_index + 1) % STAGES_COUNT : current_stage_index;
+        // Advancing to the next stage only if the player has won, otherwise going back to the first stage
+        const int next_stage_index = game_won ? (current_stage_index + 1) % STAGES_COUNT : 0;
         game_state_manager->update_current_state(std::make_unique<PlayState>(game_state_manager, sprite_manager, next_stage_index));
     }
 }
