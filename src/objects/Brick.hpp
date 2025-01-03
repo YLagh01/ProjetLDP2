@@ -40,9 +40,7 @@ class Brick : public GameObject {
 public:
     Brick(SpriteManager _sprite_manager, Vector2f _position, BRICK_TYPE _brick_type);
 
-    BRICK_TYPE get_brick_type() const;
-
-    BrickTypeData get_brick_type_data() const;
+    BRICK_TYPE get_type() const;
 
     int get_hits_needed() const;
 
@@ -70,7 +68,7 @@ private:
 
     int hits_needed;
 
-    POWERUP_TYPE held_powerup;
+    POWERUP_TYPE held_powerup_type;
 };
 
 #endif

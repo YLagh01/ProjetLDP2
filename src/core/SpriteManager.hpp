@@ -19,9 +19,9 @@ public:
     ALLEGRO_BITMAP *background_2_bitmap;
 
     // Health bar
-    ALLEGRO_BITMAP *health_bar_full;
-    ALLEGRO_BITMAP *health_bar_two_left;
-    ALLEGRO_BITMAP *health_bar_one_left;
+    ALLEGRO_BITMAP *health_bar_full_bitmap;
+    ALLEGRO_BITMAP *health_bar_two_left_bitmap;
+    ALLEGRO_BITMAP *health_bar_one_left_bitmap;
 
     std::unordered_map<int, ALLEGRO_BITMAP *> health_bar_sprite_map;
 

@@ -28,7 +28,7 @@ Brick::Brick(SpriteManager _sprite_manager, const Vector2f _position, const BRIC
     type(_brick_type),
     type_data(brick_type_data_map.at(_brick_type)),
     hits_needed(type_data.hits_needed),
-    held_powerup(POWERUP_TYPE::NONE) {
+    held_powerup_type(POWERUP_TYPE::NONE) {
 
     // Handling special brick sprites
     if (type == BRICK_TYPE::SILVER) {
@@ -42,12 +42,8 @@ Brick::Brick(SpriteManager _sprite_manager, const Vector2f _position, const BRIC
     }
 }
 
-BRICK_TYPE Brick::get_brick_type() const {
+BRICK_TYPE Brick::get_type() const {
     return type;
-}
-
-BrickTypeData Brick::get_brick_type_data() const {
-    return type_data;
 }
 
 int Brick::get_hits_needed() const {
@@ -59,11 +55,11 @@ void Brick::set_hits_needed(const int _hits_needed) {
 }
 
 POWERUP_TYPE Brick::get_held_powerup_type() const {
-    return held_powerup;
+    return held_powerup_type;
 }
 
 void Brick::set_held_powerup_type(const POWERUP_TYPE _held_powerup_type) {
-    held_powerup = _held_powerup_type;
+    held_powerup_type = _held_powerup_type;
 }
 
 void Brick::draw() const {
@@ -71,8 +67,8 @@ void Brick::draw() const {
     al_draw_tinted_bitmap(bitmap, type_data.color, position.x, position.y, 0);
 
     // Drawing the letter of the brick's held powerup on top of the brick's sprite if it holds one
-    if (held_powerup != POWERUP_TYPE::NONE) {
-        ALLEGRO_BITMAP *powerup_letter_bitmap = get_powerup_bitmaps(sprite_manager).at(held_powerup).letter_bitmap;
+    if (held_powerup_type != POWERUP_TYPE::NONE) {
+        ALLEGRO_BITMAP *powerup_letter_bitmap = get_powerup_bitmaps(sprite_manager).at(held_powerup_type).letter_bitmap;
         al_draw_bitmap(powerup_letter_bitmap, position.x, position.y, 0);
     }
 }
@@ -82,7 +78,7 @@ void Brick::draw_bricks(const SpriteManager &sprite_manager, const std::vector<s
         brick->draw();
 
         // If the brick is silver, if it needs 1 hit to be destroyed and if it doesn't have the appropriate sprite yet, set it to the appropriate sprite
-        if (brick->get_brick_type() == BRICK_TYPE::SILVER && brick->get_hits_needed() == 1 && brick->get_bitmap() != sprite_manager.brick_silver_low_bitmap) {
+        if (brick->get_type() == BRICK_TYPE::SILVER && brick->get_hits_needed() == 1 && brick->get_bitmap() != sprite_manager.brick_silver_low_bitmap) {
             brick->set_bitmap(sprite_manager.brick_silver_low_bitmap);
         }
     }
@@ -114,13 +110,13 @@ void Brick::on_destroy(std::vector<std::shared_ptr<Brick> > &bricks, std::vector
         score += type_data.points_bonus;
 
         // Spawning the brick's held powerup if it holds one
-        if (held_powerup != POWERUP_TYPE::NONE) {
+        if (held_powerup_type != POWERUP_TYPE::NONE) {
             // If the disrupt powerup is active, don't spawn the brick's held powerup
             if (active_powerup != nullptr && active_powerup->has_type(POWERUP_TYPE::DISRUPT)) {
                 return;
             }
             // Spawning the brick's held powerup
-            Powerup powerup{sprite_manager, position, held_powerup};
+            Powerup powerup{sprite_manager, position, held_powerup_type};
             powerups.push_back(std::make_shared<Powerup>(powerup));
         }
     }

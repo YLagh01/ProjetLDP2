@@ -42,7 +42,7 @@ private:
     bool mouse_control_mode = false;
 
     // Game objects declarations
-    std::vector<std::shared_ptr<Powerup> > powerups;
+    std::vector<std::shared_ptr<Brick> > bricks;
 
     Plate plate;
 
@@ -50,7 +50,7 @@ private:
 
     std::vector<std::shared_ptr<Ball> > clone_balls;
 
-    std::vector<std::shared_ptr<Brick> > bricks;
+    std::vector<std::shared_ptr<Powerup> > powerups;
 
     std::shared_ptr<Powerup> active_powerup;
 

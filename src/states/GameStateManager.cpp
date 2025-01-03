@@ -5,7 +5,7 @@
 
 #include "GameStateManager.hpp"
 
-void GameStateManager::update_state(std::unique_ptr<GameState> new_state) {
+void GameStateManager::update_current_state(std::unique_ptr<GameState> new_state) {
     current_state = std::move(new_state);
 }
 

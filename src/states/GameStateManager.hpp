@@ -17,7 +17,7 @@ protected:
 public:
     ~GameStateManager() = default;
 
-    void update_state(std::unique_ptr<GameState>);
+    void update_current_state(std::unique_ptr<GameState>);
 
     void update() const;
 

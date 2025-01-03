@@ -99,7 +99,7 @@ void PlayState::update() {
         if (lives_remaining <= 0) {
             // Game over, defeat (no lives remaining)
             write_high_score(score, high_score, false);
-            game_state_manager->update_state(
+            game_state_manager->update_current_state(
                 std::make_unique<GameOverState>(game_state_manager, sprite_manager, score, stage_index, false));
         } else {
             // Lost one life, resetting the plate and ball
@@ -118,7 +118,7 @@ void PlayState::update() {
 
     // If all the non-golden bricks have been destroyed
     for (const auto &brick: bricks) {
-        if (brick->get_brick_type() != BRICK_TYPE::GOLDEN) {
+        if (brick->get_type() != BRICK_TYPE::GOLDEN) {
             has_won = false;
         }
     }
@@ -126,7 +126,7 @@ void PlayState::update() {
     // Game over, victory
     if (has_won) {
         write_high_score(score, high_score, false);
-        game_state_manager->update_state(
+        game_state_manager->update_current_state(
             std::make_unique<GameOverState>(game_state_manager, sprite_manager, score, stage_index, true));
     }
 
@@ -204,7 +204,7 @@ void PlayState::key_down(const int keycode) {
             const int stage_index_increment = keycode == ALLEGRO_KEY_F2 ? -1 + STAGES_COUNT : 1;
             const int next_stage_index      = (stage_index + stage_index_increment) % STAGES_COUNT;
             // Updating the play state to load the next stage
-            game_state_manager->update_state(
+            game_state_manager->update_current_state(
                 std::make_unique<PlayState>(game_state_manager, sprite_manager, next_stage_index));
             break;
         }

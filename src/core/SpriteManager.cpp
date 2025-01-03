@@ -14,14 +14,14 @@ SpriteManager::SpriteManager() {
     background_2_bitmap = al_load_bitmap("../res/sprites/background/background_2.png");
 
     // Health bar
-    health_bar_full     = al_load_bitmap("../res/sprites/health_bar/health_bar_full.png");
-    health_bar_two_left = al_load_bitmap("../res/sprites/health_bar/health_bar_two_left.png");
-    health_bar_one_left = al_load_bitmap("../res/sprites/health_bar/health_bar_one_left.png");
+    health_bar_full_bitmap     = al_load_bitmap("../res/sprites/health_bar/health_bar_full.png");
+    health_bar_two_left_bitmap = al_load_bitmap("../res/sprites/health_bar/health_bar_two_left.png");
+    health_bar_one_left_bitmap = al_load_bitmap("../res/sprites/health_bar/health_bar_one_left.png");
 
     health_bar_sprite_map = {
-        {3, health_bar_full    },
-        {2, health_bar_two_left},
-        {1, health_bar_one_left}
+        {3, health_bar_full_bitmap    },
+        {2, health_bar_two_left_bitmap},
+        {1, health_bar_one_left_bitmap}
     };
 
     // Bricks

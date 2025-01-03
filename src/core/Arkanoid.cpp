@@ -5,8 +5,6 @@
 
 #include "../Common.hpp"
 
-#include "../core/FontManager.hpp"
-
 #include "../states/GameStateManager.hpp"
 #include "../states/PlayState.hpp"
 
@@ -72,7 +70,7 @@ int main(int /* argc */, char ** /* argv */) {
     SpriteManager    sprite_manager{};
     FontManager      font_manager{};
     // Making the play state the initial state on runtime, starting at stage 0
-    game_state_manager.update_state(std::make_unique<PlayState>(&game_state_manager, sprite_manager, 0));
+    game_state_manager.update_current_state(std::make_unique<PlayState>(&game_state_manager, sprite_manager, 0));
 
     bool running = true;
     ALLEGRO_EVENT event;
