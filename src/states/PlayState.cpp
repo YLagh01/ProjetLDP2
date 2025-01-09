@@ -101,6 +101,7 @@ void PlayState::update() {
             write_high_score(score, high_score, false);
             game_state_manager->update_current_state(
                 std::make_unique<GameOverState>(game_state_manager, sprite_manager, score, stage_index, false));
+            return;
         } else {
             // Lost one life, resetting the plate and ball
             setup_plate_and_ball();
@@ -131,6 +132,7 @@ void PlayState::update() {
         write_high_score(score, high_score, false);
         game_state_manager->update_current_state(
             std::make_unique<GameOverState>(game_state_manager, sprite_manager, score, stage_index, true));
+        return;
     }
 
     // Updating the high score if the current score is greater
